@@ -241,6 +241,12 @@ siteplot=ggplot(data=trimmed_data,aes(x=Site,y=mean.biomass, color=SC.Category))
   scale_color_manual(values = c("red","orange","forestgreen")) 
 siteplot
 
+levelplot=ggplot(data=trimmed_data,aes(x=SC.Level,y=mean.biomass, color=SC.Category))+
+  geom_boxplot() +
+  labs(x = "Stream", y = "Biomass (g/m2)") +
+  theme_minimal() +
+  scale_color_manual(values = c("red","orange","forestgreen")) 
+levelplot
 
 
 FFGgplot=ggplot(data=trimmed_data,aes(x=FFG,y=mean.biomass, na.rm=TRUE))+
@@ -280,6 +286,7 @@ FFGgplot2=ggplot(data=trimmed_data,aes(x=FFG,y=mean.biomass))+
   ylab(expression(Biomass))+
   xlab("")+
   scale_colour_viridis(discrete = T)+
+  scale_color_manual(values = c("forestgreen","orange","red")) +
   theme_bw()+
   theme(axis.title=element_text(size=23),
         axis.text=element_text(size=15),
@@ -293,11 +300,33 @@ FFGgplot2=ggplot(data=trimmed_data,aes(x=FFG,y=mean.biomass))+
         legend.key=element_rect(fill="white",color="white"))
 FFGgplot2 # a bit bleak on the scrapers still
 
+#Let's make panels based on SC category
+FFGgplot3=ggplot(data=trimmed_data,aes(x=SC.Category,y=mean.biomass))+
+  facet_wrap(~FFG,ncol=6,nrow=6)+ #this is creating multiple "panels" for site
+  geom_boxplot()+
+  geom_point(aes(color=FFG),size=2)+
+  ylab(expression(Biomass))+
+  xlab("")+
+  scale_colour_viridis(discrete = T)+
+  scale_color_manual(values = c("forestgreen","orange","red", "purple","blue")) +
+  theme_bw()+
+  theme(axis.title=element_text(size=23),
+        axis.text=element_text(size=15),
+        panel.grid = element_blank(), 
+        axis.line=element_line(),
+        axis.text.x = element_text(angle = 90, hjust = 1,face="italic"),
+        legend.position="top",
+        legend.title = element_blank(),
+        legend.text = element_text(size=20),
+        legend.background = element_blank(),
+        legend.key=element_rect(fill="white",color="white"))
+FFGgplot3 # a bit bleak on the scrapers still
+
 #proportions!
 library(RColorBrewer)
 trimmed_data$SC.Category <- factor(trimmed_data$SC.Category, levels = c("REF","MID","HIGH"))
 trimmed_data$FFG <- factor(trimmed_data$FFG, levels = c("Scraper","Shredder","Predator","Collector-Gatherer","Collector-Filterer"))
-FFGgplot3= ggplot(trimmed_data, aes(x = SC.Category, y = mean.biomass, fill = FFG)) +
+FFGgplot4= ggplot(trimmed_data, aes(x = SC.Category, y = mean.biomass, fill = FFG)) +
   geom_bar(stat = "identity") +
   labs(
     x = "SC Level (µS/cm)",
@@ -306,13 +335,13 @@ FFGgplot3= ggplot(trimmed_data, aes(x = SC.Category, y = mean.biomass, fill = FF
   ) +
   scale_fill_brewer(palette = "RdYlGn", type = "qual", direction = -1)+
   theme_minimal()
-FFGgplot3
+FFGgplot4
 
 #proportions across sites
 library(RColorBrewer)
 trimmed_data$SC.Level <- factor(trimmed_data$SC.Level, levels = c("25","72","78","387","402","594","1,119","1,242","1,457"))
 trimmed_data$FFG <- factor(trimmed_data$FFG, levels = c("Scraper","Shredder","Predator","Collector-Gatherer","Collector-Filterer"))
-FFGgplot4= ggplot(trimmed_data, aes(x = SC.Level, y = mean.biomass, fill = FFG)) +
+FFGgplot5= ggplot(trimmed_data, aes(x = SC.Level, y = mean.biomass, fill = FFG)) +
   geom_bar(stat = "identity") +
   labs(
     x = "SC Level (µS/cm)",
@@ -321,7 +350,7 @@ FFGgplot4= ggplot(trimmed_data, aes(x = SC.Level, y = mean.biomass, fill = FFG))
   ) +
   scale_fill_brewer(palette = "RdYlGn", type = "qual", direction = -1) +
   theme_minimal()
-FFGgplot4
+FFGgplot5
 
 -----------------------------------------
 #ANOVA

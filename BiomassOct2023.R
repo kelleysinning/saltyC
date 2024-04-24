@@ -13,9 +13,11 @@ biomassoct=read.csv("OCT23BIOMASS.csv")
 
 head(biomassoct)
 
+#Fixing up data sheets
 #First, let's add a new column to correct biomass by area
 biomassoct <- biomassoct %>% mutate(Biomass.Area.Corrected = Biomass..g.*Density....individuals.m2.)
 
+-----------------------------------------
 
 #Adding FFGs...this will become relevant later 
 biomassoct$Genus=as.character(biomassoct$Genus)
@@ -321,7 +323,7 @@ FFGgplot4= ggplot(trimmed_data, aes(x = SC.Level, y = mean.biomass, fill = FFG))
   theme_minimal()
 FFGgplot4
 
-
+-----------------------------------------
 #ANOVA
 install.packages("broom")
 install.packages("kableExtra")
@@ -500,7 +502,7 @@ news(package='DHARMa')
 
 testDispersion(g2) #poisson model
 #definitely too much dispersion, would want to do neg binomial if interested in abundance
-
+-----------------------------------------
 
 #AIC
 library(AICcmodavg)

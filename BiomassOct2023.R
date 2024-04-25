@@ -7,6 +7,8 @@ library(viridis)
 library(ggthemes)
 library(dplyr)
 library(tidyverse)
+library(RColorBrewer)
+library(rcartocolor)
 
 
 biomassoct=read.csv("OCT23BIOMASS.csv")
@@ -301,14 +303,20 @@ FFGgplot2=ggplot(data=trimmed_data,aes(x=FFG,y=mean.biomass))+
 FFGgplot2 # a bit bleak on the scrapers still
 
 #Let's make panels based on SC category
+install.packages("rcartocolor")#Colorblind color schemes
+display_carto_all(colorblind_friendly = TRUE)
+
+colors <- carto_pal(n =5,"Geyser")
+
+trimmed_data$FFG <- factor(trimmed_data$FFG, levels = c("Scraper","Shredder","Predator","Collector-Gatherer","Collector-Filterer"))
 FFGgplot3=ggplot(data=trimmed_data,aes(x=SC.Category,y=mean.biomass))+
   facet_wrap(~FFG,ncol=6,nrow=6)+ #this is creating multiple "panels" for site
   geom_boxplot()+
   geom_point(aes(color=FFG),size=2)+
-  ylab(expression(Biomass))+
+  ylab(expression(Biomass(g/m^2)))+
   xlab("")+
   scale_colour_viridis(discrete = T)+
-  scale_color_manual(values = c("forestgreen","orange","red", "purple","blue")) +
+  scale_color_manual(values = colors) +
   theme_bw()+
   theme(axis.title=element_text(size=23),
         axis.text=element_text(size=15),
@@ -320,7 +328,7 @@ FFGgplot3=ggplot(data=trimmed_data,aes(x=SC.Category,y=mean.biomass))+
         legend.text = element_text(size=20),
         legend.background = element_blank(),
         legend.key=element_rect(fill="white",color="white"))
-FFGgplot3 # a bit bleak on the scrapers still
+FFGgplot3
 
 #proportions!
 library(RColorBrewer)
@@ -362,6 +370,8 @@ library(kableExtra)
 trimmed_data$SC.Category <- factor(trimmed_data$SC.Category, levels = c("REF","MID","HIGH"))
 trimmed_data$FFG <- factor(trimmed_data$FFG, levels = c("Scraper","Shredder","Collector-Gatherer","Predator","Collector-Filterer"))
 
+
+anova_result <- aov(mean.biomass ~ SC.Category, data = trimmed_data)
 #Biomass across SC category
 anova_result <- aov(mean.biomass ~ SC.Category, data = trimmed_data)
 summary(anova_result) #biomass across SC.category isn't significant

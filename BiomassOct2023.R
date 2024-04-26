@@ -9,15 +9,93 @@ library(dplyr)
 library(tidyverse)
 library(RColorBrewer)
 library(rcartocolor)
+library(dplyr)
+library(purrr)
+
+#I made a "totals"doc already for stats, but wanted to challenge myself with making the code for
+#it, can refer back to this to doubl check myself
+biomassoctpre.made=read.csv("OCT23BIOMASS.csv")
+
+head(biomassoctpre.made)
+
+#Ok, brinch in the csv summary sheets for each site 
+CROoct=read.csv("CRO_Oct.2023_SUMMARY.csv")
+EASoct=read.csv("EAS_Oct.2023_SUMMARY.csv")
+HCNoct=read.csv("HCN_Oct.2023_SUMMARY.csv")
+FRYoct=read.csv("FRY_Oct.2023_SUMMARY.csv")
+HURoct=read.csv("HUR_Oct.2023_SUMMARY.csv")
+RUToct=read.csv("RUT_Oct.2023_SUMMARY.csv")
+LLWoct=read.csv("LLW_Oct.2023_SUMMARY.csv")
+LLCoct=read.csv("LLC_Oct.2023_SUMMARY.csv")
+RICoct=read.csv("RIC_Oct.2023_SUMMARY.csv")
+
+# Exclude all the abundance and biomass, only totals and descriptors
+columns_to_keep <- c("Sample.Date", "Fraction", "Replicate", "Order", "Family", "Genus","Abundance","Density","Biomass")  # Columns to keep
+
+CROoct.totals <- select(CROoct, all_of(columns_to_keep))
+EASoct.totals <- select(EASoct, all_of(columns_to_keep))
+HCNoct.totals <- select(HCNoct, all_of(columns_to_keep))
+FRYoct.totals <- select(FRYoct, all_of(columns_to_keep))
+HURoct.totals <- select(HURoct, all_of(columns_to_keep))
+RUToct.totals <- select(RUToct, all_of(columns_to_keep))
+LLWoct.totals <- select(LLWoct, all_of(columns_to_keep))
+LLCoct.totals <- select(LLCoct, all_of(columns_to_keep))
+RICoct.totals <- select(RICoct, all_of(columns_to_keep))
+
+#adding a column with site name bc once we merge we won't know
+CROoct.totals$Site <- c("CRO")
+EASoct.totals$Site <- c("EAS")
+HCNoct.totals$Site <- c("HCN")
+FRYoct.totals$Site <- c("FRY")
+HURoct.totals$Site <- c("HUR")
+RUToct.totals$Site <- c("RUT")
+LLWoct.totals$Site <- c("LLW")
+LLCoct.totals$Site <- c("LLC")
+RICoct.totals$Site <- c("RIC")
+
+#adding a column with SC level bc once we merge we won't know
+CROoct.totals$SC.Level <- c("72")
+EASoct.totals$SC.Level <- c("25")
+HCNoct.totals$SC.Level <- c("78")
+FRYoct.totals$SC.Level <- c("402")
+HURoct.totals$SC.Level <- c("387")
+RUToct.totals$SC.Level <- c("594")
+LLWoct.totals$SC.Level <- c("1,119")
+LLCoct.totals$SC.Level <- c("1,242")
+RICoct.totals$SC.Level <- c("1,457")
+
+#adding a column with SC Category bc once we merge we won't know
+CROoct.totals$SC.Category <- c("REF")
+EASoct.totals$SC.Category <- c("REF")
+HCNoct.totals$SC.Category <- c("REF")
+FRYoct.totals$SC.Category <- c("MID")
+HURoct.totals$SC.Category <- c("MID")
+RUToct.totals$SC.Category <- c("MID")
+LLWoct.totals$SC.Category <- c("HIGH")
+LLCoct.totals$SC.Category <- c("HIGH")
+RICoct.totals$SC.Category <- c("HIGH")
 
 
-biomassoct=read.csv("OCT23BIOMASS.csv")
+# Merge data frames based on trimmed columns (the totals and descriptors)
 
-head(biomassoct)
+list_of_oct_totals <- list(CROoct.totals, EASoct.totals,HCNoct.totals, FRYoct.totals,
+                           HURoct.totals, RUToct.totals, LLWoct.totals, LLCoct.totals,
+                           RICoct.totals) 
+
+biomassoct <- do.call(rbind, list_of_oct_totals) #THIS WORKS
+
+#rarranging order of columns
+biomassoct <- select(biomassoct,Site,SC.Category,SC.Level,Sample.Date,Fraction,
+                     Replicate,Order,Family,Genus,Abundance,Density,Biomass)
+
+
+#use this for excluding columns for nmds
+CROct_totals <- CROoct[,-c(1:3)]
+
 
 #Fixing up data sheets
 #First, let's add a new column to correct biomass by area
-biomassoct <- biomassoct %>% mutate(Biomass.Area.Corrected = Biomass..g.*Density....individuals.m2.)
+biomassoct <- biomassoct %>% mutate(Biomass.Area.Corrected = Biomass*Density)
 
 -----------------------------------------
 
@@ -148,9 +226,14 @@ meansitegg2 = ggplot(data = meansites, aes(x = Site, y = mean.biomass, colour = 
 
 meansitegg2 #Can't really see the plots bc of outliers
 
+
+
+#------------------------------------------------
 #Let's trim the outliers for total biomass
-Q1 <- quantile(biomassmeantable$mean.biomass, 0.25)
-Q3 <- quantile(biomassmeantable$mean.biomass, 0.75)
+Q1 <- quantile(biomassmeantable$mean.biomass, 0.25, na.rm=TRUE) #na.rm = true means
+#ignoring missing values which is ok bc the NAs will be adults or pupas
+Q3 <- quantile(biomassmeantable$mean.biomass, 0.75, na.rm=TRUE)
+
 IQR <- Q3 - Q1
 
 #Define upper and lower bounds for outliers
@@ -160,14 +243,15 @@ upper_bound <- Q3 + 1.5 * IQR
 #Trim outliers on biomassmeantable (includes reps per site)
 trimmed_data <- subset(biomassmeantable, mean.biomass >= lower_bound & mean.biomass <= upper_bound)
 
+
 #And let's do this for our mean reps --> mean sites
-Q1mean <- quantile(meansites$mean.biomass, 0.25)
-Q3mean <- quantile(meansites$mean.biomass, 0.75)
-IQRmean <- Q3 - Q1
+Q1mean <- quantile(meansites$mean.biomass, 0.25, na.rm=TRUE)
+Q3mean <- quantile(meansites$mean.biomass, 0.75, na.rm=TRUE)
+IQRmean <- Q3mean - Q1mean
 
 #Define upper and lower bounds for outliers
-lower_boundmean <- Q1 - 1.5 * IQR
-upper_boundmean <- Q3 + 1.5 * IQR
+lower_boundmean <- Q1mean - 1.5 * IQRmean
+upper_boundmean <- Q3mean + 1.5 * IQRmean
 
 #Trim outliers for site averages
 trimmed_means <- subset(meansites, mean.biomass >= lower_boundmean & mean.biomass <= upper_boundmean)

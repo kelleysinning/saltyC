@@ -143,15 +143,15 @@ target_column_indexLLW <- which(names(LLWoct) == 'BIOMASS.STARTS.HERE')
 # Keeping Site, SC.Leve;, SC. Category, Sample Date, Fraction, Replicate, Genus, 
 #and every thing for biomass
 
-CRO_nmds_subset <- CROoct[, c(1:6, 9, (target_column_indexCRO + 1):ncol(CROoct))]
-EAS_nmds_subset <- EASoct[, c(1:6, 9, (target_column_indexEAS + 1):ncol(EASoct))]
-HCN_nmds_subset <- HCNoct[, c(1:6, 9, (target_column_indexHCN + 1):ncol(HCNoct))]
-FRY_nmds_subset <- FRYoct[, c(1:6, 9, (target_column_indexFRY + 1):ncol(FRYoct))]
-HUR_nmds_subset <- HURoct[, c(1:6, 9, (target_column_indexHUR + 1):ncol(HURoct))]
-RUT_nmds_subset <- RUToct[, c(1:6, 9, (target_column_indexRUT + 1):ncol(RUToct))]
-RIC_nmds_subset <- RICoct[, c(1:6, 9, (target_column_indexRIC + 1):ncol(RICoct))]
-LLC_nmds_subset <- LLCoct[, c(1:6, 9, (target_column_indexLLC + 1):ncol(LLCoct))]
-LLW_nmds_subset <- LLWoct[, c(1:6, 9, (target_column_indexLLW + 1):ncol(LLWoct))]
+CRO_subset <- CROoct[, c(1:6, 9, (target_column_indexCRO + 1):ncol(CROoct))]
+EAS_subset <- EASoct[, c(1:6, 9, (target_column_indexEAS + 1):ncol(EASoct))]
+HCN_subset <- HCNoct[, c(1:6, 9, (target_column_indexHCN + 1):ncol(HCNoct))]
+FRY_subset <- FRYoct[, c(1:6, 9, (target_column_indexFRY + 1):ncol(FRYoct))]
+HUR_subset <- HURoct[, c(1:6, 9, (target_column_indexHUR + 1):ncol(HURoct))]
+RUT_subset <- RUToct[, c(1:6, 9, (target_column_indexRUT + 1):ncol(RUToct))]
+RIC_subset <- RICoct[, c(1:6, 9, (target_column_indexRIC + 1):ncol(RICoct))]
+LLC_subset <- LLCoct[, c(1:6, 9, (target_column_indexLLC + 1):ncol(LLCoct))]
+LLW_subset <- LLWoct[, c(1:6, 9, (target_column_indexLLW + 1):ncol(LLWoct))]
 
 # Before I can merge all those guys to add in columns with zeros to make them the same
 #number of columns, I need to cut out the summary totals at the end of everything.
@@ -160,15 +160,15 @@ LLW_nmds_subset <- LLWoct[, c(1:6, 9, (target_column_indexLLW + 1):ncol(LLWoct))
 columns_to_delete <- c("Abundance", "Density", "Biomass")  
 
 # Subset the data frame by selecting only the columns that are not in 'columns_to_delete'
-CRO_nmds_subset_final <- CRO_nmds_subset[, !names(CRO_nmds_subset) %in% columns_to_delete]
-EAS_nmds_subset_final <- EAS_nmds_subset[, !names(EAS_nmds_subset) %in% columns_to_delete]
-HCN_nmds_subset_final <- HCN_nmds_subset[, !names(HCN_nmds_subset) %in% columns_to_delete]
-FRY_nmds_subset_final <- FRY_nmds_subset[, !names(FRY_nmds_subset) %in% columns_to_delete]
-HUR_nmds_subset_final <- HUR_nmds_subset[, !names(HUR_nmds_subset) %in% columns_to_delete]
-RUT_nmds_subset_final <- RUT_nmds_subset[, !names(RUT_nmds_subset) %in% columns_to_delete]
-RIC_nmds_subset_final <- RIC_nmds_subset[, !names(RIC_nmds_subset) %in% columns_to_delete]
-LLC_nmds_subset_final <- LLC_nmds_subset[, !names(LLC_nmds_subset) %in% columns_to_delete]
-LLW_nmds_subset_final <- LLW_nmds_subset[, !names(LLW_nmds_subset) %in% columns_to_delete]
+CRO_subset_final <- CRO_subset[, !names(CRO_subset) %in% columns_to_delete]
+EAS_subset_final <- EAS_subset[, !names(EAS_subset) %in% columns_to_delete]
+HCN_subset_final <- HCN_subset[, !names(HCN_subset) %in% columns_to_delete]
+FRY_subset_final <- FRY_subset[, !names(FRY_subset) %in% columns_to_delete]
+HUR_subset_final <- HUR_subset[, !names(HUR_subset) %in% columns_to_delete]
+RUT_subset_final <- RUT_subset[, !names(RUT_subset) %in% columns_to_delete]
+RIC_subset_final <- RIC_subset[, !names(RIC_subset) %in% columns_to_delete]
+LLC_subset_final <- LLC_subset[, !names(LLC_subset) %in% columns_to_delete]
+LLW_subset_final <- LLW_subset[, !names(LLW_subset) %in% columns_to_delete]
 
 
 
@@ -191,35 +191,35 @@ num_new_columnsLLC <- 48-27
 
 # Add new columns filled with zeroes
 for (i in 1:num_new_columnsCRO) {
-  CRO_nmds_subset_final[[paste0("New_Column", i)]] <- 0
+  CRO_subset_final[[paste0("New_Column", i)]] <- 0
 }
 
 for (i in 1:num_new_columnsEAS) {
-  EAS_nmds_subset_final[[paste0("New_Column", i)]] <- 0
+  EAS_subset_final[[paste0("New_Column", i)]] <- 0
 }
 
 for (i in 1:num_new_columnsHCN) {
-  HCN_nmds_subset_final[[paste0("New_Column", i)]] <- 0
+  HCN_subset_final[[paste0("New_Column", i)]] <- 0
 }
 
 for (i in 1:num_new_columnsFRY) {
-  FRY_nmds_subset_final[[paste0("New_Column", i)]] <- 0
+  FRY_subset_final[[paste0("New_Column", i)]] <- 0
 }
 
 for (i in 1:num_new_columnsHUR) {
-  HUR_nmds_subset_final[[paste0("New_Column", i)]] <- 0
+  HUR_subset_final[[paste0("New_Column", i)]] <- 0
 }
 
 for (i in 1:num_new_columnsRUT) {
-  RUT_nmds_subset_final[[paste0("New_Column", i)]] <- 0
+  RUT_subset_final[[paste0("New_Column", i)]] <- 0
 }
 
 for (i in 1:num_new_columnsRIC) {
-  RIC_nmds_subset_final[[paste0("New_Column", i)]] <- 0
+  RIC_subset_final[[paste0("New_Column", i)]] <- 0
 }
 
 for (i in 1:num_new_columnsLLC) {
-  LLC_nmds_subset_final[[paste0("New_Column", i)]] <- 0
+  LLC_subset_final[[paste0("New_Column", i)]] <- 0
 }
 
 
@@ -228,45 +228,38 @@ for (i in 1:num_new_columnsLLC) {
 
 
 # Generate new column names
-new_column_namesCRO <- seq_len(ncol(CRO_nmds_subset_final) - 7)
-new_column_namesEAS <- seq_len(ncol(EAS_nmds_subset_final) - 7)
-new_column_namesHCN <- seq_len(ncol(HCN_nmds_subset_final) - 7)
-new_column_namesFRY <- seq_len(ncol(FRY_nmds_subset_final) - 7)
-new_column_namesHUR <- seq_len(ncol(HUR_nmds_subset_final) - 7)
-new_column_namesRUT <- seq_len(ncol(RUT_nmds_subset_final) - 7)
-new_column_namesRIC <- seq_len(ncol(RIC_nmds_subset_final) - 7)
-new_column_namesLLC <- seq_len(ncol(LLC_nmds_subset_final) - 7)
-new_column_namesLLW <- seq_len(ncol(LLW_nmds_subset_final) - 7)
+new_column_namesCRO <- seq_len(ncol(CRO_subset_final) - 7)
+new_column_namesEAS <- seq_len(ncol(EAS_subset_final) - 7)
+new_column_namesHCN <- seq_len(ncol(HCN_subset_final) - 7)
+new_column_namesFRY <- seq_len(ncol(FRY_subset_final) - 7)
+new_column_namesHUR <- seq_len(ncol(HUR_subset_final) - 7)
+new_column_namesRUT <- seq_len(ncol(RUT_subset_final) - 7)
+new_column_namesRIC <- seq_len(ncol(RIC_subset_final) - 7)
+new_column_namesLLC <- seq_len(ncol(LLC_subset_final) - 7)
+new_column_namesLLW <- seq_len(ncol(LLW_subset_final) - 7)
 
 # Rename the columns
-names(CRO_nmds_subset_final)[8:ncol(CRO_nmds_subset_final)] <- new_column_namesCROO
-names(EAS_nmds_subset_final)[8:ncol(EAS_nmds_subset_final)] <- new_column_namesEAS
-names(HCN_nmds_subset_final)[8:ncol(HCN_nmds_subset_final)] <- new_column_namesHCN
-names(FRY_nmds_subset_final)[8:ncol(FRY_nmds_subset_final)] <- new_column_namesFRY
-names(HUR_nmds_subset_final)[8:ncol(HUR_nmds_subset_final)] <- new_column_namesHUR
-names(RUT_nmds_subset_final)[8:ncol(RUT_nmds_subset_final)] <- new_column_namesRUT
-names(RIC_nmds_subset_final)[8:ncol(RIC_nmds_subset_final)] <- new_column_namesRIC
-names(LLC_nmds_subset_final)[8:ncol(LLC_nmds_subset_final)] <- new_column_namesLLC
-names(LLW_nmds_subset_final)[8:ncol(LLW_nmds_subset_final)] <- new_column_namesLLW
+names(CRO_subset_final)[8:ncol(CRO_subset_final)] <- new_column_namesCRO
+names(EAS_subset_final)[8:ncol(EAS_subset_final)] <- new_column_namesEAS
+names(HCN_subset_final)[8:ncol(HCN_subset_final)] <- new_column_namesHCN
+names(FRY_subset_final)[8:ncol(FRY_subset_final)] <- new_column_namesFRY
+names(HUR_subset_final)[8:ncol(HUR_subset_final)] <- new_column_namesHUR
+names(RUT_subset_final)[8:ncol(RUT_subset_final)] <- new_column_namesRUT
+names(RIC_subset_final)[8:ncol(RIC_subset_final)] <- new_column_namesRIC
+names(LLC_subset_final)[8:ncol(LLC_subset_final)] <- new_column_namesLLC
+names(LLW_subset_final)[8:ncol(LLW_subset_final)] <- new_column_namesLLW
 
 ## Amazing, now all of the subsetted data has the same amount of columns. Let's merge
 
-list_of_oct_nmds <- list(CRO_nmds_subset_final, EAS_nmds_subset_final, HCN_nmds_subset_final, FRY_nmds_subset_final,
-                           HUR_nmds_subset_final, RUT_nmds_subset_final, RIC_nmds_subset_final, LLC_nmds_subset_final,
-                           LLW_nmds_subset_final) 
+list_of_oct <- list(CRO_subset_final, EAS_subset_final, HCN_subset_final, FRY_subset_final,
+                           HUR_subset_final, RUT_subset_final, RIC_subset_final, LLC_subset_final,
+                           LLW_subset_final) 
 
-merged <- do.call(rbind, list_of_oct_nmds)
+mergedoct <- do.call(rbind, list_of_oct)
 
-#Just realized IDK if an nmds requires all this... might be able to use to cumulative df
+#Just realized IDK if an nmds requires all this...hopefully i can use it at some point
 
-biomass.nmds = biomassoct %>% 
-  pivot_wider(
-    names_from = Genus, 
-    values_from = Biomass.Area.Corrected,
-    values_fn = sum
-  ) #i dont know why this isn't working
-
-
+# Saving these as csv
 write.csv(merged, "merged_oct_biomass.csv", row.names=FALSE)
 write.csv(biomassoct, "BiomassOctTotals.csv", row.names = FALSE)
 -----------------------------------------
@@ -776,7 +769,7 @@ simulationOutput <- simulateResiduals(fittedModel = g1, plot = T)
 simulationOutput #Gamma distribution is good! Makes sense bc positive continuous
 
 library(emmeans)
-emmeans(g1, pairwise~Sc.Level)
+emmeans(g1, pairwise~SC.Level)
 emmeans(g1, pairwise~SC.Level, type="response") #tells you the expected abundance
 #at each stream and confidence limits for Y-variable
 #strong significant differences between ref and mid-high salinity stream
@@ -784,7 +777,7 @@ emmeans(g1, pairwise~SC.Level, type="response") #tells you the expected abundanc
 
 #Just for fun, let's do poisson on my abundance
 ##Poisson GLM## 
-g2 = glm(Abundance....individuals.~Site,data=biomassoct, family=poisson);
+g2 = glm(Abundance~Site,data=biomassoct, family=poisson);
 summary(g2)
 
 library(AER)
@@ -870,3 +863,137 @@ aic_c %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed"), full_width = F)
 
 
+#------------------------------
+
+
+#Let's try nmds again
+
+aggregated_df <- aggregate(Biomass.Area.Corrected ~ Site + SC.Level + SC.Category + 
+                             Genus, data = biomassoct, FUN = mean, na.rm = TRUE)
+
+
+biomass.nmds = aggregated_df %>% 
+  pivot_wider(
+    names_from = Genus, 
+    values_from = Biomass.Area.Corrected,
+  ) #ahhh ok it worked
+
+# Loading the appropariate packages
+library(vegan) # vegan to calculate distance matrices
+library(ggplot2) # ggplot for plotting
+library(tidyverse) 
+library(dplyr)
+library(ggrepel)
+
+
+#  Rename the ID part of the matrix; take out the columns for streams, SC, and season
+oct.nmds <- biomass.nmds[,-c(1:3)]
+
+oct.nmds[is.na(oct.nmds)] <- 0
+
+# Running the NMDS for all taxa
+
+#  metaMDS integrates functions from several packages to perform NMDS.....
+#  ....including'vegdist' from the vegan package
+
+X <- metaMDS(oct.nmds, distance='bray', k=2, trymax=20, autotransform=FALSE, pc=FALSE, plot=FALSE)
+
+# Gives average stress
+X$stress
+
+# Gives weights that different species hold in the axis
+X$species
+
+# Basic plot of all of the points
+plot(X, display=c('sites', 'species'), choices=c(1,2), type='p')
+
+nmds_species <- scores(X, display = "species")
+nmds_sites <- scores(X, display = "sites")
+
+
+site.scores <- as.data.frame(scores(nmds_sites)) #Using the scores function from vegan to extract the site scores and convert to a data.frame
+# Add site column to dataframe
+site.scores$site <- rownames(site.scores)
+
+species.scores <- as.data.frame(scores(nmds_species))  #Using the scores function from vegan to extract the species scores and convert to a data.frame
+species.scores$species <- rownames(species.scores)  # create a column of species, from the rownames of species.scores
+head(species.scores)
+
+
+# Plot NMDS using ggplot2
+ggplot(site.scores, aes(x = NMDS1, y = NMDS2, label = site)) +
+  geom_point() +
+  geom_text(hjust = 1, nudge_x = 0.05) +  # Add labels with slight offset
+  labs(x = "NMDS1", y = "NMDS2") +
+  theme_minimal()
+
+TOPPlot <- ggplot() + 
+  geom_text(data=species.scores,aes(x=NMDS1,y=NMDS2,label=species),alpha=0.5) +  # add the species labels
+  geom_point(data=species.scores,aes(x=NMDS1,y=NMDS2),size=3) + # add the point markers
+  geom_text(data=species.scores,aes(x=NMDS1,y=NMDS2,label=species),size=4,vjust=0) +  # add the site labels
+  scale_colour_manual(values=c("EAS" = "darkgreen", "CRO" = "darkgreen", "HCN" = "darkgreen",
+                               "FRY" = "chocolate1", "RUT" = "chocolate1","HUR" = "chocolate1", 
+                               "RIC" = "darkred", "LLC" = "darkred", "LLW" = "darkred")) +
+  coord_equal() +
+  theme_bw() +
+  theme( panel.grid.major = element_blank(),  #remove major-grid labels
+         panel.grid.minor = element_blank()) + scale_x_continuous(name = "NMDS1", limits = c(-1.5, 1.5)) +
+  scale_y_continuous(name = "NMDS2", limits = c(-1.5, 1.5))
+
+print(TOPPlot)
+
+TOPPlot <- ggplot() + 
+  geom_text(data=site.scores,aes(x=NMDS1,y=NMDS2,label=site),alpha=0.5) +  # add the species labels
+  geom_point(data=site.scores,aes(x=NMDS1,y=NMDS2),size=3) + # add the point markers
+  geom_text(data=site.scores,aes(x=NMDS1,y=NMDS2,label=site),size=4,vjust=0) +  # add the site labels
+  scale_colour_manual(values=c("EAS" = "darkgreen", "CRO" = "darkgreen", "HCN" = "darkgreen",
+                               "FRY" = "chocolate1", "RUT" = "chocolate1","HUR" = "chocolate1", 
+                               "RIC" = "darkred", "LLC" = "darkred", "LLW" = "darkred")) +
+  coord_equal() +
+  theme_bw() +
+  theme( panel.grid.major = element_blank(),  #remove major-grid labels
+         panel.grid.minor = element_blank()) + scale_x_continuous(name = "NMDS1", limits = c(-1.5, 1.5)) +
+  scale_y_continuous(name = "NMDS2", limits = c(-1.5, 1.5))
+
+print(TOPPlot)
+
+
+
+
+plot(nmds_coordinates, type="n", xlim=c(-2, 2), ylim=c(-1.5, 1.5))
+text(nmds_coordinates[,1], nmds_coordinates[,2], rownames(nmds_df), col="blue")
+all(colnames(X) == rownames(nmds_coordinates))
+
+# Create dataframe
+nmds_df <- data.frame(nmds_coordinates)
+
+# Plot NMDS using ggplot2
+gg <-ggplot(nmds_df, aes(x = NMDS1, y = NMDS2)) +
+  geom_point() +
+  labs(x = "NMDS1", y = "NMDS2") +
+  theme_minimal()
+
+print(gg)
+
+# Plotting all species, this is messy so need to go back and specify certain taxa
+TAXON <- envfit(X, oct.nmds, permutations = 999)
+TAXON
+plot(TAXON)
+
+nmds_df$species <- rownames(nmds_df)
+
+
+
+
+
+ggplot(, aes(x = NMDS1, y = NMDS2, color = Group)) +
+  geom_point() +
+  labs(x = "NMDS1", y = "NMDS2", color = "SC.Level") +
+  theme_minimal()
+
+
+# Mega polygons based on sites 
+ggplot(nmds_coordinates, aes(x=NMDS1,y=NMDS2)) +
+  geom_polygon(data=nmds_coordinates,alpha=0.5) +
+  geom_point(size=2) +
+  geom_text(data=nmds_coordinates,aes(x=NMDS1,y=NMDS2,label=site),size=4,vjust=0)

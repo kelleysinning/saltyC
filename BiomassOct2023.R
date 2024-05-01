@@ -257,9 +257,18 @@ list_of_oct_nmds <- list(CRO_nmds_subset_final, EAS_nmds_subset_final, HCN_nmds_
 
 merged <- do.call(rbind, list_of_oct_nmds)
 
-oct_nmds_transposed <- t(merged)
+#Just realized IDK if an nmds requires all this... might be able to use to cumulative df
+
+biomass.nmds = biomassoct %>% 
+  pivot_wider(
+    names_from = Genus, 
+    values_from = Biomass.Area.Corrected,
+    values_fn = sum
+  ) #i dont know why this isn't working
 
 
+write.csv(merged, "merged_oct_biomass.csv", row.names=FALSE)
+write.csv(biomassoct, "BiomassOctTotals.csv", row.names = FALSE)
 -----------------------------------------
 
 #Adding FFGs...this will become relevant later 

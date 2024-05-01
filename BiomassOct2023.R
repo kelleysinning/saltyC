@@ -29,8 +29,71 @@ LLWoct=read.csv("LLW_Oct.2023_SUMMARY.csv")
 LLCoct=read.csv("LLC_Oct.2023_SUMMARY.csv")
 RICoct=read.csv("RIC_Oct.2023_SUMMARY.csv")
 
+#adding a column with site name bc once we merge we won't know
+CROoct$Site <- c("CRO")
+EASoct$Site <- c("EAS")
+HCNoct$Site <- c("HCN")
+FRYoct$Site <- c("FRY")
+HURoct$Site <- c("HUR")
+RUToct$Site <- c("RUT")
+LLWoct$Site <- c("LLW")
+LLCoct$Site <- c("LLC")
+RICoct$Site <- c("RIC")
+
+#adding a column with SC level bc once we merge we won't know
+CROoct$SC.Level <- c("72")
+EASoct$SC.Level <- c("25")
+HCNoct$SC.Level <- c("78")
+FRYoct$SC.Level <- c("402")
+HURoct$SC.Level <- c("387")
+RUToct$SC.Level <- c("594")
+LLWoct$SC.Level <- c("1,119")
+LLCoct$SC.Level <- c("1,242")
+RICoct$SC.Level <- c("1,457")
+
+#adding a column with SC Category bc once we merge we won't know
+CROoct$SC.Category <- c("REF")
+EASoct$SC.Category <- c("REF")
+HCNoct$SC.Category <- c("REF")
+FRYoct$SC.Category <- c("MID")
+HURoct$SC.Category <- c("MID")
+RUToct$SC.Category <- c("MID")
+LLWoct$SC.Category <- c("HIGH")
+LLCoct$SC.Category <- c("HIGH")
+RICoct$SC.Category <- c("HIGH")
+
+
+#Let's re-arrange the columns so these new additions are at the front
+CROoct <- CROoct %>% 
+  select(c("Site","SC.Category","SC.Level","Sample.Date","Fraction",
+           "Replicate","Order","Family","Genus"), everything())
+EASoct <- EASoct %>% 
+  select(c("Site","SC.Category","SC.Level","Sample.Date","Fraction",
+           "Replicate","Order","Family","Genus"), everything())
+HCNoct <- HCNoct %>% 
+  select(c("Site","SC.Category","SC.Level","Sample.Date","Fraction",
+           "Replicate","Order","Family","Genus"), everything())
+FRYoct <- FRYoct %>% 
+  select(c("Site","SC.Category","SC.Level","Sample.Date","Fraction",
+           "Replicate","Order","Family","Genus"), everything())
+HURoct <- HURoct %>% 
+  select(c("Site","SC.Category","SC.Level","Sample.Date","Fraction",
+           "Replicate","Order","Family","Genus"), everything())
+RUToct <- RUToct %>% 
+  select(c("Site","SC.Category","SC.Level","Sample.Date","Fraction",
+           "Replicate","Order","Family","Genus"), everything())
+RICoct <- RICoct %>% 
+  select(c("Site","SC.Category","SC.Level","Sample.Date","Fraction",
+           "Replicate","Order","Family","Genus"), everything())
+LLCoct <- LLCoct %>% 
+  select(c("Site","SC.Category","SC.Level","Sample.Date","Fraction",
+           "Replicate","Order","Family","Genus"), everything())
+LLWoct <- LLWoct %>% 
+  select(c("Site","SC.Category","SC.Level","Sample.Date","Fraction",
+           "Replicate","Order","Family","Genus"), everything())
+
 # Exclude all the abundance and biomass, only totals and descriptors
-columns_to_keep <- c("Sample.Date", "Fraction", "Replicate", "Order", "Family", "Genus","Abundance","Density","Biomass")  # Columns to keep
+columns_to_keep <- c("Sample.Date", "Site", "SC.Level", "SC.Category", "Fraction", "Replicate", "Order", "Family", "Genus","Abundance","Density","Biomass")  # Columns to keep
 
 CROoct.totals <- select(CROoct, all_of(columns_to_keep))
 EASoct.totals <- select(EASoct, all_of(columns_to_keep))
@@ -41,39 +104,6 @@ RUToct.totals <- select(RUToct, all_of(columns_to_keep))
 LLWoct.totals <- select(LLWoct, all_of(columns_to_keep))
 LLCoct.totals <- select(LLCoct, all_of(columns_to_keep))
 RICoct.totals <- select(RICoct, all_of(columns_to_keep))
-
-#adding a column with site name bc once we merge we won't know
-CROoct.totals$Site <- c("CRO")
-EASoct.totals$Site <- c("EAS")
-HCNoct.totals$Site <- c("HCN")
-FRYoct.totals$Site <- c("FRY")
-HURoct.totals$Site <- c("HUR")
-RUToct.totals$Site <- c("RUT")
-LLWoct.totals$Site <- c("LLW")
-LLCoct.totals$Site <- c("LLC")
-RICoct.totals$Site <- c("RIC")
-
-#adding a column with SC level bc once we merge we won't know
-CROoct.totals$SC.Level <- c("72")
-EASoct.totals$SC.Level <- c("25")
-HCNoct.totals$SC.Level <- c("78")
-FRYoct.totals$SC.Level <- c("402")
-HURoct.totals$SC.Level <- c("387")
-RUToct.totals$SC.Level <- c("594")
-LLWoct.totals$SC.Level <- c("1,119")
-LLCoct.totals$SC.Level <- c("1,242")
-RICoct.totals$SC.Level <- c("1,457")
-
-#adding a column with SC Category bc once we merge we won't know
-CROoct.totals$SC.Category <- c("REF")
-EASoct.totals$SC.Category <- c("REF")
-HCNoct.totals$SC.Category <- c("REF")
-FRYoct.totals$SC.Category <- c("MID")
-HURoct.totals$SC.Category <- c("MID")
-RUToct.totals$SC.Category <- c("MID")
-LLWoct.totals$SC.Category <- c("HIGH")
-LLCoct.totals$SC.Category <- c("HIGH")
-RICoct.totals$SC.Category <- c("HIGH")
 
 
 # Merge data frames based on trimmed columns (the totals and descriptors)
@@ -89,13 +119,146 @@ biomassoct <- select(biomassoct,Site,SC.Category,SC.Level,Sample.Date,Fraction,
                      Replicate,Order,Family,Genus,Abundance,Density,Biomass)
 
 
-#use this for excluding columns for nmds
-CROct_totals <- CROoct[,-c(1:3)]
-
-
 #Fixing up data sheets
 #First, let's add a new column to correct biomass by area
 biomassoct <- biomassoct %>% mutate(Biomass.Area.Corrected = Biomass*Density)
+
+##Okay, now we gotta rearrange the data in another funky way for an NMDS
+#First, I want cut out the abundance columns (the count data), total abundance, density, and biomass,
+#order and family, and FFG for each site. I want to do this so that I just have 
+#site info and biomass (0s and #s) for each genera
+
+# Find the index of the target column, have to do this for each df
+target_column_indexCRO <- which(names(CROoct) == 'BIOMASS.STARTS.HERE')
+target_column_indexEAS <- which(names(EASoct) == 'BIOMASS.STARTS.HERE')
+target_column_indexHCN <- which(names(HCNoct) == 'BIOMASS.STARTS.HERE')
+target_column_indexFRY <- which(names(FRYoct) == 'BIOMASS.STARTS.HERE')
+target_column_indexHUR <- which(names(HURoct) == 'BIOMASS.STARTS.HERE')
+target_column_indexRUT <- which(names(RUToct) == 'BIOMASS.STARTS.HERE')
+target_column_indexRIC <- which(names(RICoct) == 'BIOMASS.STARTS.HERE')
+target_column_indexLLC <- which(names(LLCoct) == 'BIOMASS.STARTS.HERE')
+target_column_indexLLW <- which(names(LLWoct) == 'BIOMASS.STARTS.HERE')
+
+# Subset the data frame to keep specified columns and columns after the target column
+# Keeping Site, SC.Leve;, SC. Category, Sample Date, Fraction, Replicate, Genus, 
+#and every thing for biomass
+
+CRO_nmds_subset <- CROoct[, c(1:6, 9, (target_column_indexCRO + 1):ncol(CROoct))]
+EAS_nmds_subset <- EASoct[, c(1:6, 9, (target_column_indexEAS + 1):ncol(EASoct))]
+HCN_nmds_subset <- HCNoct[, c(1:6, 9, (target_column_indexHCN + 1):ncol(HCNoct))]
+FRY_nmds_subset <- FRYoct[, c(1:6, 9, (target_column_indexFRY + 1):ncol(FRYoct))]
+HUR_nmds_subset <- HURoct[, c(1:6, 9, (target_column_indexHUR + 1):ncol(HURoct))]
+RUT_nmds_subset <- RUToct[, c(1:6, 9, (target_column_indexRUT + 1):ncol(RUToct))]
+RIC_nmds_subset <- RICoct[, c(1:6, 9, (target_column_indexRIC + 1):ncol(RICoct))]
+LLC_nmds_subset <- LLCoct[, c(1:6, 9, (target_column_indexLLC + 1):ncol(LLCoct))]
+LLW_nmds_subset <- LLWoct[, c(1:6, 9, (target_column_indexLLW + 1):ncol(LLWoct))]
+
+# Before I can merge all those guys to add in columns with zeros to make them the same
+#number of columns, I need to cut out the summary totals at the end of everything.
+#Yes, I could've probably done that above but would've been a bit complicated
+
+columns_to_delete <- c("Abundance", "Density", "Biomass")  
+
+# Subset the data frame by selecting only the columns that are not in 'columns_to_delete'
+CRO_nmds_subset_final <- CRO_nmds_subset[, !names(CRO_nmds_subset) %in% columns_to_delete]
+EAS_nmds_subset_final <- EAS_nmds_subset[, !names(EAS_nmds_subset) %in% columns_to_delete]
+HCN_nmds_subset_final <- HCN_nmds_subset[, !names(HCN_nmds_subset) %in% columns_to_delete]
+FRY_nmds_subset_final <- FRY_nmds_subset[, !names(FRY_nmds_subset) %in% columns_to_delete]
+HUR_nmds_subset_final <- HUR_nmds_subset[, !names(HUR_nmds_subset) %in% columns_to_delete]
+RUT_nmds_subset_final <- RUT_nmds_subset[, !names(RUT_nmds_subset) %in% columns_to_delete]
+RIC_nmds_subset_final <- RIC_nmds_subset[, !names(RIC_nmds_subset) %in% columns_to_delete]
+LLC_nmds_subset_final <- LLC_nmds_subset[, !names(LLC_nmds_subset) %in% columns_to_delete]
+LLW_nmds_subset_final <- LLW_nmds_subset[, !names(LLW_nmds_subset) %in% columns_to_delete]
+
+
+
+# Now, I was silly and have different numbers of columns for each df. In future months,
+#I'll make sure they all have, say 50, columns for size class to avoid this step. 
+#But for now, I had to add columns of zeroes to make them all equal. Our df with the most
+#columns is LLW with 48, so I'll have to make sure the others have 48 and just fill them with 
+#zeroes. This way I can merge them for nmds
+
+num_new_columnsCRO <- 48-27 # In CRO I have 27 variables and LLW has 48, so I'll subtract to
+                              #know what I need to add
+num_new_columnsEAS <- 48-26
+num_new_columnsHCN <- 48-27
+num_new_columnsFRY <- 48-27
+num_new_columnsHUR <- 48-40
+num_new_columnsRUT <- 48-24
+num_new_columnsRIC <- 48-32
+num_new_columnsLLC <- 48-27
+
+
+# Add new columns filled with zeroes
+for (i in 1:num_new_columnsCRO) {
+  CRO_nmds_subset_final[[paste0("New_Column", i)]] <- 0
+}
+
+for (i in 1:num_new_columnsEAS) {
+  EAS_nmds_subset_final[[paste0("New_Column", i)]] <- 0
+}
+
+for (i in 1:num_new_columnsHCN) {
+  HCN_nmds_subset_final[[paste0("New_Column", i)]] <- 0
+}
+
+for (i in 1:num_new_columnsFRY) {
+  FRY_nmds_subset_final[[paste0("New_Column", i)]] <- 0
+}
+
+for (i in 1:num_new_columnsHUR) {
+  HUR_nmds_subset_final[[paste0("New_Column", i)]] <- 0
+}
+
+for (i in 1:num_new_columnsRUT) {
+  RUT_nmds_subset_final[[paste0("New_Column", i)]] <- 0
+}
+
+for (i in 1:num_new_columnsRIC) {
+  RIC_nmds_subset_final[[paste0("New_Column", i)]] <- 0
+}
+
+for (i in 1:num_new_columnsLLC) {
+  LLC_nmds_subset_final[[paste0("New_Column", i)]] <- 0
+}
+
+
+# Next, we have to rename all the columns to be the same size class so there aren't
+# certain dfs with 12 "new_columns" but another with 4 and it's weird
+
+
+# Generate new column names
+new_column_namesCRO <- seq_len(ncol(CRO_nmds_subset_final) - 7)
+new_column_namesEAS <- seq_len(ncol(EAS_nmds_subset_final) - 7)
+new_column_namesHCN <- seq_len(ncol(HCN_nmds_subset_final) - 7)
+new_column_namesFRY <- seq_len(ncol(FRY_nmds_subset_final) - 7)
+new_column_namesHUR <- seq_len(ncol(HUR_nmds_subset_final) - 7)
+new_column_namesRUT <- seq_len(ncol(RUT_nmds_subset_final) - 7)
+new_column_namesRIC <- seq_len(ncol(RIC_nmds_subset_final) - 7)
+new_column_namesLLC <- seq_len(ncol(LLC_nmds_subset_final) - 7)
+new_column_namesLLW <- seq_len(ncol(LLW_nmds_subset_final) - 7)
+
+# Rename the columns
+names(CRO_nmds_subset_final)[8:ncol(CRO_nmds_subset_final)] <- new_column_namesCROO
+names(EAS_nmds_subset_final)[8:ncol(EAS_nmds_subset_final)] <- new_column_namesEAS
+names(HCN_nmds_subset_final)[8:ncol(HCN_nmds_subset_final)] <- new_column_namesHCN
+names(FRY_nmds_subset_final)[8:ncol(FRY_nmds_subset_final)] <- new_column_namesFRY
+names(HUR_nmds_subset_final)[8:ncol(HUR_nmds_subset_final)] <- new_column_namesHUR
+names(RUT_nmds_subset_final)[8:ncol(RUT_nmds_subset_final)] <- new_column_namesRUT
+names(RIC_nmds_subset_final)[8:ncol(RIC_nmds_subset_final)] <- new_column_namesRIC
+names(LLC_nmds_subset_final)[8:ncol(LLC_nmds_subset_final)] <- new_column_namesLLC
+names(LLW_nmds_subset_final)[8:ncol(LLW_nmds_subset_final)] <- new_column_namesLLW
+
+## Amazing, now all of the subsetted data has the same amount of columns. Let's merge
+
+list_of_oct_nmds <- list(CRO_nmds_subset_final, EAS_nmds_subset_final, HCN_nmds_subset_final, FRY_nmds_subset_final,
+                           HUR_nmds_subset_final, RUT_nmds_subset_final, RIC_nmds_subset_final, LLC_nmds_subset_final,
+                           LLW_nmds_subset_final) 
+
+merged <- do.call(rbind, list_of_oct_nmds)
+
+oct_nmds_transposed <- t(merged)
+
 
 -----------------------------------------
 
@@ -168,7 +331,7 @@ biomassoct$FFG[biomassoct$Genus=="Pteronarcys"]="Shredder"
 biomassoct$FFG[biomassoct$Genus=="Paracapnia"]="Shredder"
 biomassoct$FFG[biomassoct$Genus=="Rhagovelia"]="Predator"
 biomassoct$FFG[biomassoct$Genus=="Rhyacophila"]="Predator"
-biomassoct$FFG[biomassoct$Genus=="Shipsa"]="Shredder"
+biomassoct$FFG[biomassoct$Genus=="Prostoia"]="Shredder"
 biomassoct$FFG[biomassoct$Genus=="Sialis"]="Predator"
 biomassoct$FFG[biomassoct$Genus=="Simulium"]="Collector-Filterer"
 biomassoct$FFG[biomassoct$Genus=="Stratiomyidae"]="Collector-Gatherer"

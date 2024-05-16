@@ -18,7 +18,7 @@ biomassoctpre.made=read.csv("OCT23BIOMASS.csv")
 
 head(biomassoctpre.made)
 
-#Ok, brinch in the csv summary sheets for each site 
+#Ok, bring in the csv summary sheets for each site 
 CROoct=read.csv("CRO_Oct.2023_SUMMARY.csv")
 EASoct=read.csv("EAS_Oct.2023_SUMMARY.csv")
 HCNoct=read.csv("HCN_Oct.2023_SUMMARY.csv")
@@ -124,7 +124,7 @@ biomassoct <- select(biomassoct,Site,SC.Category,SC.Level,Sample.Date,Fraction,
 #First, let's add a new column to correct biomass by area
 biomassoct <- biomassoct %>% mutate(Biomass.Area.Corrected = Biomass*Density)
 
-##Okay, now we gotta rearrange the data in another funky way for an NMDS
+##Okay, now we gotta rearrange the data in another funky way 
 #First, I want cut out the abundance columns (the count data), total abundance, density, and biomass,
 #order and family, and FFG for each site. I want to do this so that I just have 
 #site info and biomass (0s and #s) for each genera
@@ -258,8 +258,7 @@ list_of_oct <- list(CRO_subset_final, EAS_subset_final, HCN_subset_final, FRY_su
 
 mergedoct <- do.call(rbind, list_of_oct)
 
-#Just realized IDK if an nmds requires all this...hopefully i can use it at some point
-
+# Reaslized I didn't need to do this lol, hopefully will use later on
 # Saving these as csv
 write.csv(mergedoct, "merged_oct_biomass.csv", row.names=FALSE)
 write.csv(biomassoct, "BiomassOctTotals.csv", row.names = FALSE)
@@ -394,8 +393,7 @@ biomassoct %>%
 
 
 #------------------------------------------------
-#We aren't going to used these trimmed data sets anymore, too transformative upon discussion, 
-#median didn't work bc there are sooo many zeroes that almost everything was zeroe
+#We aren't going to used these trimmed data sets anymore for now, too transformative upon discussion 
 
 Q1 <- quantile(biomassmeantable$mean.biomass, 0.25, na.rm=TRUE) #na.rm = true means
 #ignoring missing values which is ok bc the NAs will be adults or pupas
@@ -439,7 +437,7 @@ trimmed_means = trimmed_means %>%
   drop_na(mean.biomass)
 
 #---------------------------------
-# GGplot mania
+# GGplot mania 
 # First, let's order them correctly
 meansites$Site <- factor(meansites$Site, levels = c("EAS", "CRO","HCN","FRY","HUR","RUT","LLC","LLW","RIC"))
 meansites$SC.Category <- factor(meansites$SC.Category, levels = c("REF","MID","HIGH"))
@@ -730,7 +728,7 @@ propgg_site # Nice!
 
 
 
-# Now let's do it for SC level, calculate total biomass for each SC Level
+# Double check some things with a scatter plot
 total_biomass_sites <- biomassmeantable %>%
   group_by(SC.Level) %>%
   summarise(total_biomass = sum(mean.biomass)) # Summing the median biomass for each sc level,
@@ -787,24 +785,25 @@ ffg_colors <- c("Scraper" = "#008080",
                 "Collector-Filterer" = "#CA562C")  
  
 
-total_biomass_sites_reps <- biomassmeantable %>%
+total_biomass_sites <- biomassmeantable %>% #summing total biomass for each sc.level, is there
+    #a way to QAQC this with raw data? I worry it make differ from meansites
   group_by(SC.Level) %>%
   summarise(total_biomass = sum(mean.biomass)) 
 
 df_proportions_table <- biomassmeantable %>%
-  left_join(total_biomass_sites_reps, by = "SC.Level") %>%
-  group_by(SC.Level, FFG, Replicate) %>%
-  summarise(Proportion = sum(mean.biomass) / first(total_biomass))
+  left_join(total_biomass_sites, by = "SC.Level") %>%
+  group_by(SC.Level, FFG, Replicate) %>% #getting proportion by FFG and Rep per site
+  summarise(Proportion = sum(mean.biomass) / first(total_biomass)) 
 
 df_filtered <- df_proportions_table %>%
-  filter(FFG %in% c("Scraper", "Shredder"))
+  filter(FFG %in% c("Scraper", "Shredder")) #just using scrapers and shredders
 
 # Calculate percentage biomass for each FFG
 df_filtered <- df_filtered %>%
-  mutate(percentage.biomass = Proportion* 100)
+  mutate(percentage.biomass = Proportion* 100) #getting percent biomass
 
 # Plot box plots
-percentttt <- ggplot(df_filtered, aes(x = SC.Level, y = percentage.biomass, fill = FFG)) +
+percent <- ggplot(df_filtered, aes(x = SC.Level, y = percentage.biomass, fill = FFG)) +
   geom_boxplot() +  # Adjust color, fill, transparency, and width of boxplots
   labs(x = "Salinity", y = "Percentage Biomass", fill = "FFGs") +
   scale_fill_manual(values = ffg_colors, name = "FFG") +
@@ -823,7 +822,7 @@ percentttt <- ggplot(df_filtered, aes(x = SC.Level, y = percentage.biomass, fill
   ) +
   ylim(0, 100)  # Limit y-axis to 0-100
 
-percentttt
+percent
 
 #the math isn't mathing so let's look at this as a bar lot to see if it makes sense
 stackedpercent = percentt <- ggplot(df_filtered, aes(x = SC.Level, y = percentage.biomass, fill = FFG)) +

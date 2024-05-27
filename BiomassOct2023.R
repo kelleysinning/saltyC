@@ -1309,7 +1309,7 @@ ggplot(site.scores, aes(x = NMDS1, y = NMDS2, label = site)) +
 Biomass_Sums <- colSums(oct.nmds)
 Biomass_Sums # Sums of all taxa
 
-Biomass_CutOff <- 1# Don't want taxa with an abundance less than 150
+Biomass_CutOff <- .01# Don't want taxa with an abundance less than 150
 
 TOP <- oct.nmds %>%
   select(where( ~ sum(.) >= Biomass_CutOff))
@@ -1470,7 +1470,7 @@ ggplot(site.scores, aes(x = NMDS1, y = NMDS2, label = site)) +
 Biomass_Sums <- colSums(oct.nmds.ffg)
 Biomass_Sums # Sums of all taxa
 
-Biomass_CutOff <- 350 # Don't want taxa with an abundance less than 150
+Biomass_CutOff <- .01 # Don't want taxa with an abundance less than 150
 
 TOP <- oct.nmds.ffg %>%
   select(where( ~ sum(.) >= Biomass_CutOff))

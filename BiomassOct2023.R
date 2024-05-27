@@ -357,9 +357,18 @@ biomassoct <- biomassoct[!is.na(biomassoct$FFG), ]
 # Taking out zeroes in biomass too
 biomassoct <- biomassoct[biomassoct$Biomass.Area.Corrected != 0,]
 
+#-----Checking biomass for hiya for target taxa
+filtered_data <- subset(biomassoct, Genus == "Leuctra" & Site == "RIC")
+
+total_biomass <- sum(filtered_data$Density, na.rm = TRUE)
+
+# Print the result
+print(total_biomass)
 
 
-# Summarizing means of each replicate for each stream, changing this to median
+
+
+#-----Summarizing means of each replicate for each stream, changing this to median
 biomassmeantable = biomassoct %>% 
   group_by(SC.Category,SC.Level,Site,Replicate,FFG ) %>% 
   summarise(mean.biomass=median(Biomass.Area.Corrected,na.rm=FALSE))
@@ -883,6 +892,7 @@ stackedpercent # I guess it lines up for the most part? since the stacked bars d
 #-----------------------------------------
 #ANOVA
 install.packages("broom")
+
 install.packages("kableExtra")
 library(broom)
 library(kableExtra)
@@ -953,6 +963,7 @@ tidy_anova4 %>%
 
 tukey_result <- TukeyHSD(anova_result4)
 print(tukey_result)
+
 
 #Biomass across FFG and SC.Category interactive
 anova_result5 <- aov(mean.biomass ~ FFG*SC.Category, data = trimmed_data)
@@ -1244,7 +1255,7 @@ library(tidyverse)
 library(dplyr)
 
 aggregated_df <- aggregate(Biomass.Area.Corrected ~ Site + SC.Level + SC.Category + 
-                             Genus, data = biomassoct, FUN = mean, na.rm = TRUE)
+                             Genus, data = biomassoct, FUN = median, na.rm = TRUE)
 
 
 biomass.nmds = aggregated_df %>% 
@@ -1287,7 +1298,7 @@ site.scores <- as.data.frame(scores(nmds_sites)) #Using the scores function from
 # vegan to extract the site scores and convert to a data.frame
 # Add site column to dataframe
 site.scores$site <- rownames(site.scores)
-head(site.scores)
+
 
 species.scores <- as.data.frame(scores(nmds_species))  #Using the scores function 
 # from vegan to extract the species scores and convert to a data.frame
@@ -1295,7 +1306,7 @@ species.scores$species <- rownames(species.scores)  # create a column of species
 head(species.scores)
 
 
-# Plot NMDS using ggplot2
+# Plot sites using ggplot2
 ggplot(site.scores, aes(x = NMDS1, y = NMDS2, label = site)) +
   geom_point() +
   geom_text(hjust = 1, nudge_x = 0.05) +  # Add labels with slight offset
@@ -1309,12 +1320,12 @@ ggplot(site.scores, aes(x = NMDS1, y = NMDS2, label = site)) +
 Biomass_Sums <- colSums(oct.nmds)
 Biomass_Sums # Sums of all taxa
 
-Biomass_CutOff <- .01# Don't want taxa with an abundance less than 150
+Biomass_CutOff <- .01# Don't want taxa with an abundance less than ___
 
 TOP <- oct.nmds %>%
   select(where( ~ sum(.) >= Biomass_CutOff))
 
-TOP # Taxa with abundances greater than 400
+TOP # Taxa with abundances greater than ___
 colSums(TOP)
 
 # NMDS for top taxa only
@@ -1351,16 +1362,6 @@ site.scores <- site.scores[order(site.scores$site), ]
 species.scores <- as.data.frame(scores(TOPScores, "species"))  #Using the scores function from vegan to extract the species scores and convert to a data.frame
 species.scores$species <- rownames(species.scores)  # create a column of species, from the rownames of species.scores
 head(species.scores)  #look at the data
-
-my_colors = carto_pal(7, "Geyser") # to get hexcodes for geyser to assign FFGS to, for 
-#consistency in graphs I'll use for SFS
-my_colors
-ffg_colors <- c("Scraper" = "#008080", 
-                "Shredder" = "#CA562C", 
-                "Predator" = "#F6EDBD", 
-                "Collector-Gatherer" = "#DE8A5A", 
-                "Collector-Filterer" = "#70A494")  
-
 
 
 # Filter data for specific colors
@@ -1403,7 +1404,7 @@ library(dplyr)
 library(rcartocolor)
 
 aggregated_df_ffg <- aggregate(Biomass.Area.Corrected ~ Site + SC.Level + SC.Category + 
-                       + FFG, data = biomassoct, FUN = mean, na.rm = TRUE)
+                       + FFG, data = biomassoct, FUN = median, na.rm = TRUE)
 
 shredder_biomass_sum <- biomassoct %>%
   filter(Site == "HCN", FFG == "Shredder") %>%
@@ -1470,7 +1471,7 @@ ggplot(site.scores, aes(x = NMDS1, y = NMDS2, label = site)) +
 Biomass_Sums <- colSums(oct.nmds.ffg)
 Biomass_Sums # Sums of all taxa
 
-Biomass_CutOff <- .01 # Don't want taxa with an abundance less than 150
+Biomass_CutOff <- .01# Don't want taxa with an abundance less than 150
 
 TOP <- oct.nmds.ffg %>%
   select(where( ~ sum(.) >= Biomass_CutOff))
@@ -1513,16 +1514,6 @@ species.scores$species <- rownames(species.scores)  # create a column of species
 head(species.scores)  #look at the data
 
 
-my_colors = carto_pal(7, "Geyser") # to get hexcodes for geyser to assign FFGS to, for 
-#consistency in graphs I'll use for SFS
-my_colors
-ffg_colors <- c("Scraper" = "#008080", 
-                "Shredder" = "#CA562C", 
-                "Predator" = "#F6EDBD", 
-                "Collector-Gatherer" = "#DE8A5A", 
-                "Collector-Filterer" = "#70A494")  
-
-
 # Filter data for specific colors
 ref <- subset(site.scores, site %in% c("CRO", "EAS", "HCN"))
 mid <- subset(site.scores, site %in% c("HUR", "FRY", "RUT"))
@@ -1533,17 +1524,17 @@ TOPPlott <- ggplot() +
   geom_polygon(data = ref, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#70A494", alpha = 0.3) +
   geom_polygon(data = mid, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#EDBB8A", alpha = 0.3) +
   geom_polygon(data = high, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#CA562C", alpha = 0.3) +
-  geom_text(data = species.scores, aes(x = NMDS1, y = NMDS2, label = species), alpha = 0.3, vjust = 1.5, color = "grey") +   
+  geom_text(data = species.scores, aes(x = NMDS1, y = NMDS2, label = species), alpha = 0.5, vjust = 0.5, color = "grey") +   
   geom_point(data = site.scores, aes(x = NMDS1, y = NMDS2, color = site), size = 3) + 
-  geom_text(data = site.scores, aes(x = NMDS1, y = NMDS2, label = site), size = 4, vjust = 1.5) +
+  geom_text(data = site.scores, aes(x = NMDS1, y = NMDS2, label = site), size = 4, vjust = 0.5) +
   scale_colour_manual(values = c("CRO" = "#70A494", "EAS" = "#70A494", "HCN" = "#70A494",
                                  "HUR" = "#EDBB8A", "FRY" = "#EDBB8A", "RUT" = "#EDBB8A", 
                                  "RIC" = "#CA562C", "LLC" = "#CA562C", "LLW" = "#CA562C")) +
   coord_equal() +
   theme_bw() +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
-  scale_x_continuous(name = "NMDS1", limits = c(-2, 2)) +
-  scale_y_continuous(name = "NMDS2", limits = c(-2, 2)) 
+  scale_x_continuous(name = "NMDS1", limits = c(-1.5, 1.5)) +
+  scale_y_continuous(name = "NMDS2", limits = c(-1.5, 1.5)) 
 
 # Display the plot
 print(TOPPlott)
@@ -1560,7 +1551,7 @@ library(dplyr)
 aggregated_df_ffg_filter <- subset(biomassoct, FFG %in% c("Scraper", "Shredder"))
 
 aggregated_df_ffg_filter <- aggregate(Biomass.Area.Corrected ~ Site + SC.Level + SC.Category + 
-                                 + Genus, data = aggregated_df_ffg_filter, FUN = mean, na.rm = TRUE)
+                                 + Genus, data = aggregated_df_ffg_filter, FUN = median, na.rm = TRUE)
 
 
 biomass.nmds.ffg.filter <- aggregated_df_ffg_filter %>% 
@@ -1650,8 +1641,8 @@ Z # Scores for top taxa with site lens
 
 
 site.scores <- as.data.frame(scores(Z)) #Using the scores function from vegan to extract the site scores and convert to a data.frame
-rownames(site.scores) <- c("EAS", "CRO", "HCN", "HUR",
-                           "FRY", "RUT", "LLW", "LLC", "RIC") # Change sites from numbers to categorical
+rownames(site.scores) <- c("LLC", "RIC", "RUT", "EAS",
+                           "HCN", "LLW", "HUR", "FRY", "CRO") # Change sites from numbers to categorical
 
 site.scores$site <- factor(rownames(site.scores), levels = c("EAS", "CRO", "HCN", "FRY", "RUT", "HUR", "RIC", "LLW", "LLC"))
 
@@ -1663,14 +1654,6 @@ species.scores <- as.data.frame(scores(TOPScores, "species"))  #Using the scores
 species.scores$species <- rownames(species.scores)  # create a column of species, from the rownames of species.scores
 head(species.scores)  #look at the data
 
-my_colors = carto_pal(7, "Geyser") # to get hexcodes for geyser to assign FFGS to, for 
-#consistency in graphs I'll use for SFS
-my_colors
-ffg_colors <- c("Scraper" = "#008080", 
-                "Shredder" = "#70A494", 
-                "Predator" = "#F6EDBD", 
-                "Collector-Gatherer" = "#DE8A5A", 
-                "Collector-Filterer" = "#CA562C")  
 
 
 # Filter data for specific colors
@@ -1683,7 +1666,7 @@ TOPPlott <- ggplot() +
   geom_polygon(data = ref, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#70A494", alpha = 0.3) +
   geom_polygon(data = mid, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#EDBB8A", alpha = 0.3) +
   geom_polygon(data = high, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#CA562C", alpha = 0.3) +
-  geom_text(data = species.scores, aes(x = NMDS1, y = NMDS2, label = species), alpha = 0.5, vjust = 1.5, color = "grey") +   
+  geom_text(data = species.scores, aes(x = NMDS1, y = NMDS2, label = species), alpha = 0.5, vjust = 0.5, color = "grey") +   
   geom_point(data = site.scores, aes(x = NMDS1, y = NMDS2, color = site), size = 3) + 
   geom_text(data = site.scores, aes(x = NMDS1, y = NMDS2, label = site), size = 4, vjust = 1.5) +
   scale_colour_manual(values = c("CRO" = "#70A494", "EAS" = "#70A494", "HCN" = "#70A494",
@@ -1692,8 +1675,8 @@ TOPPlott <- ggplot() +
   coord_equal() +
   theme_bw() +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
-  scale_x_continuous(name = "NMDS1", limits = c(-.75, .75)) +
-  scale_y_continuous(name = "NMDS2", limits = c(-.75, .75)) 
+  scale_x_continuous(name = "NMDS1", limits = c(-1,1)) +
+  scale_y_continuous(name = "NMDS2", limits = c(-1, 1)) 
 
 # Display the plot
 print(TOPPlott)

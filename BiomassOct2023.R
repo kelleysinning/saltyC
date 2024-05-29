@@ -366,6 +366,13 @@ total_biomass <- sum(filtered_data$Density, na.rm = TRUE)
 print(total_biomass)
 
 
+filtered_data <- subset(meansites, SC.Category == "REF")
+
+total_biomass <- sum(filtered_data$mean.biomass, na.rm = TRUE)
+
+# Print the result
+print(total_biomass)
+
 
 
 #-----Summarizing means of each replicate for each stream, changing this to median
@@ -627,8 +634,43 @@ FFGgplot3.5 <- ggplot(data = biomassmeantable, aes(x = Site, y = log(mean.biomas
 
 FFGgplot3.5 # Eh, still hard to see things unless log transform
 
+# Boxplots for total biomass, first have to get sum of each replicate for each stream
+sitestotal = biomassoct %>% 
+  group_by(SC.Category, Site, Replicate) %>% 
+  summarise(sum.biomass=sum(Biomass.Area.Corrected,na.rm=FALSE))
+
+medsitestotal = sitestotal %>% 
+  group_by(SC.Category, Site) %>% 
+  summarise(mean.biomass=median(sum.biomass,na.rm=FALSE))
 
 
+
+FFGgplot4=ggplot(data=medsitestotal,aes(x=SC.Category,y=sum.biomass))+ # This is creating multiple "panels" for site
+  geom_boxplot()+
+  geom_point(aes(color=SC.Category),size=2)+
+  ylab("Biomass (g/m^2)")+
+  xlab("")+
+  scale_colour_manual(values = c("REF" = "#70A494", "MID" = "#DE8A5A", "HIGH" = "#CA562C")) +
+  theme_bw()+
+  theme(axis.title=element_text(size=23),
+        axis.text=element_text(size=15),
+        panel.grid = element_blank(), 
+        axis.line=element_line(),
+        axis.text.x = element_text(angle = 90, hjust = 1,face="italic"),
+        legend.position="top",
+        legend.title = element_blank(),
+        legend.text = element_text(size=20),
+        legend.background = element_blank(),
+        legend.key=element_rect(fill="white",color="white"))
+
+FFGgplot4 # Log to see better
+
+# Checking that it is plotting correctly 
+filtered_data <- subset(biomassoct, Site == "RIC")
+
+total_biomass <- sum(filtered_data$Biomass.Area.Corrected, na.rm = TRUE)
+
+print(total_biomass)
 
 #PROPORTIONS PARTY!------------------------------------
 
@@ -1675,8 +1717,8 @@ TOPPlott <- ggplot() +
   coord_equal() +
   theme_bw() +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
-  scale_x_continuous(name = "NMDS1", limits = c(-1,1)) +
-  scale_y_continuous(name = "NMDS2", limits = c(-1, 1)) 
+  scale_x_continuous(name = "NMDS1", limits = c(-.75,.75)) +
+  scale_y_continuous(name = "NMDS2", limits = c(-.75, .6)) 
 
 # Display the plot
 print(TOPPlott)

@@ -366,12 +366,6 @@ total_biomass <- sum(filtered_data$Density, na.rm = TRUE)
 print(total_biomass)
 
 
-filtered_data <- subset(meansites, SC.Category == "REF")
-
-total_biomass <- sum(filtered_data$mean.biomass, na.rm = TRUE)
-
-# Print the result
-print(total_biomass)
 
 
 
@@ -641,14 +635,15 @@ sitestotal = biomassoct %>%
 
 medsitestotal = sitestotal %>% 
   group_by(SC.Category, Site) %>% 
-  summarise(mean.biomass=median(sum.biomass,na.rm=FALSE))
+  summarise(med.biomass=median(sum.biomass,na.rm=FALSE)) # Finding median for each site, based on summed replicates
+# So, each replicate was summed, and the median of those replicate serve as the value for that site
 
+medsitestotal$SC.Category <- factor(medsitestotal$SC.Category, levels = c("REF","MID","HIGH"))
 
-
-FFGgplot4=ggplot(data=medsitestotal,aes(x=SC.Category,y=sum.biomass))+ # This is creating multiple "panels" for site
+FFGgplot4=ggplot(data=medsitestotal,aes(x=SC.Category,y=med.biomass))+ # This is creating multiple "panels" for site
   geom_boxplot()+
   geom_point(aes(color=SC.Category),size=2)+
-  ylab("Biomass (g/m^2)")+
+  ylab(expression(Biomass(g/m^2)))+
   xlab("")+
   scale_colour_manual(values = c("REF" = "#70A494", "MID" = "#DE8A5A", "HIGH" = "#CA562C")) +
   theme_bw()+
@@ -665,12 +660,36 @@ FFGgplot4=ggplot(data=medsitestotal,aes(x=SC.Category,y=sum.biomass))+ # This is
 
 FFGgplot4 # Log to see better
 
-# Checking that it is plotting correctly 
-filtered_data <- subset(biomassoct, Site == "RIC")
+# Checking that it sitestotal is mathing correctly, it is
+filtered_data <- subset(biomassoct, Site == "RIC" & Replicate == "1")
 
 total_biomass <- sum(filtered_data$Biomass.Area.Corrected, na.rm = TRUE)
 
 print(total_biomass)
+
+
+filtered_data <- subset(medsitestotal, SC.Category == "REF" )
+
+total_biomass <- median(filtered_data$med.biomass, na.rm = TRUE)
+
+print(total_biomass)
+
+
+
+anova_result4 <- aov(med.biomass ~ SC.Category, data = medsitestotal)
+summary(anova_result4)
+
+tidy_anova4 <- tidy(anova_result4)
+
+install.packages("kableExtra")
+library(kableExtra)
+
+tidy_anova4 %>%
+  knitr::kable() %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"), full_width = F)
+
+tukey_result <- TukeyHSD(anova_result4)
+print(tukey_result)
 
 #PROPORTIONS PARTY!------------------------------------
 

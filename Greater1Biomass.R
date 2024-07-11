@@ -139,7 +139,65 @@ EASjune$Site <- c("EAS")
 FRYjune$Site <- c("FRY")
 RICjune$Site <- c("RIC")
 
-
+# Adding a column with sample month so the dates aren't weird
+# September monthly
+EASsept$Sample.Month <- c("September")
+FRYsept$Sample.Month <- c("September")
+RICsept$Sample.Month <- c("September")
+# October quarterly
+CROoct$Sample.Month <- c("October")
+EASoct$Sample.Month <- c("October")
+HCNoct$Sample.Month <- c("October")
+FRYoct$Sample.Month <- c("October")
+HURoct$Sample.Month <- c("October")
+RUToct$Sample.Month <- c("October")
+LLWoct$Sample.Month <- c("October")
+LLCoct$Sample.Month <- c("October")
+RICoct$Sample.Month <- c("October")
+# November monthly
+EASnov$Sample.Month <- c("November")
+FRYnov$Sample.Month <- c("November")
+RICnov$Sample.Month <- c("November")
+# December monthly
+EASdec$Sample.Month <- c("December")
+FRYdec$Sample.Month <- c("December")
+RICdec$Sample.Month <- c("December")
+# January monthly
+EASjan$Sample.Month <- c("January")
+FRYjan$Sample.Month <- c("January")
+RICjan$Sample.Month <- c("January")
+# February quarterly
+CROfeb$Sample.Month <- c("February")
+EASfeb$Sample.Month <- c("February")
+HCNfeb$Sample.Month <- c("February")
+FRYfeb$Sample.Month <- c("February")
+HURfeb$Sample.Month <- c("February")
+RUTfeb$Sample.Month <- c("February")
+LLWfeb$Sample.Month <- c("February")
+LLCfeb$Sample.Month <- c("February")
+RICfeb$Sample.Month <- c("February")
+# March monthly
+EASmarch$Sample.Month <- c("March")
+FRYmarch$Sample.Month <- c("March")
+RICmarch$Sample.Month <- c("March")
+# April monthly
+EASapril$Sample.Month <- c("April")
+FRYapril$Sample.Month <- c("April")
+RICapril$Sample.Month <- c("April")
+# May quarterly
+CROmay$Sample.Month <- c("May")
+EASmay$Sample.Month <- c("May")
+HCNmay$Sample.Month <- c("May")
+FRYmay$Sample.Month <- c("May")
+HURmay$Sample.Month <- c("May")
+RUTmay$Sample.Month <- c("May")
+LLWmay$Sample.Month <- c("May")
+LLCmay$Sample.Month <- c("May")
+RICmay$Sample.Month <- c("May")
+# June monthly
+EASjune$Sample.Month <- c("June")
+FRYjune$Sample.Month <- c("June")
+RICjune$Sample.Month <- c("June")
 
 
 # Adding a column with SC level bc once we merge we won't know
@@ -424,7 +482,7 @@ RICjune<- RICjune %>%
 
 
 # Exclude all the abundance and biomass, only totals and descriptors
-columns_to_keep <- c("Sample.Date", "Site", "SC.Level", "SC.Category", "Fraction", "Replicate", "Order", "Family", "Genus","Abundance","Density","Biomass")  # Columns to keep
+columns_to_keep <- c("Sample.Month", "Sample.Date", "Site", "SC.Level", "SC.Category", "Fraction", "Replicate", "Order", "Family", "Genus","Abundance","Density","Biomass")  # Columns to keep
 
 # September monthly
 EASsept.totals <- select(EASsept, all_of(columns_to_keep))
@@ -505,8 +563,9 @@ greaterbiomass <- do.call(rbind, list_of_greater_totals) #THIS WORKS
 
 
 # Rarranging order of columns
-greaterbiomass <- select(greaterbiomass,Site,SC.Category,SC.Level,Sample.Date,Fraction,
-                     Replicate,Order,Family,Genus,Abundance,Density,Biomass)
+greaterbiomass <- select(greaterbiomass,Site,SC.Category,SC.Level,Sample.Month,
+                        Sample.Date,Fraction,Replicate,Order,Family,Genus,Abundance,
+                        Density,Biomass)
 
 
 # Cleaning up data sheet
@@ -658,7 +717,7 @@ greaterbiomass <- greaterbiomass[greaterbiomass$Biomass.Area.Corrected != 0,]
 
 # Summarizing means of each FFG in each replicate for each stream
 biomassmeantable = greaterbiomass %>% 
-  group_by(Sample.Date, SC.Category,SC.Level,Site,Replicate,FFG ) %>% 
+  group_by(Sample.Month, SC.Category,SC.Level,Site,Replicate,FFG ) %>% 
   summarise(mean.biomass=mean(Biomass.Area.Corrected,na.rm=FALSE))
 
 biomassmeantable 
@@ -671,7 +730,7 @@ greaterbiomass %>%
 
 # Now, averaging the replicates from each stream
 meansites = biomassmeantable %>% 
-  group_by(Sample.Date,SC.Category,SC.Level,Site,FFG ) %>% 
+  group_by(Sample.Month,SC.Category,SC.Level,Site,FFG ) %>% 
   summarise(mean.biomass=mean(mean.biomass,na.rm=FALSE))
 
 meansites # Essentially, the means of the means. I QAQCed this manually and checked that
@@ -684,6 +743,7 @@ meansites$Site <- factor(meansites$Site, levels = c("EAS", "CRO","HCN","FRY","HU
 meansites$SC.Category <- factor(meansites$SC.Category, levels = c("REF","MID","HIGH"))
 meansites$SC.Level <- factor(meansites$SC.Level, levels = c("25","72","78","387","402","594","1119","1242","1457"))
 meansites$FFG <- factor(meansites$FFG, levels = c("Scraper","Shredder","Predator","Collector-Gatherer","Collector-Filterer"))
+meansites$Sample.Month <- factor(meansites$Sample.Month, levels = c("September","October","November","December","January", "February", "March", "April", "May", "June"))
 
 biomassmeantable$Site <- factor(biomassmeantable$Site, levels = c("EAS", "CRO","HCN","FRY","HUR","RUT","LLC","LLW","RIC"))
 biomassmeantable$SC.Category <- factor(biomassmeantable$SC.Category, levels = c("REF","MID","HIGH"))
@@ -770,7 +830,7 @@ FFGgplot2 <- ggplot(data = meansites, aes(x = FFG, y = (log(mean.biomass)))) +
 print(FFGgplot2) # Doesn't really look like anything is happening here
 
 
-FFGgplot3 <- ggplot(data = meansites, aes(x = Sample.Date, y = (log(mean.biomass)))) +
+FFGgplot3 <- ggplot(data = meansites, aes(x = Sample.Month, y = (log(mean.biomass)))) +
   facet_wrap(~FFG, ncol = 5, nrow = 5) +  # Facet by FFG
   geom_boxplot(fill = "white") +  # Set fill color for boxplot to white
   geom_point(aes(color = FFG), size = 2) +  # Assign color to points based on FFG

@@ -637,7 +637,7 @@ greaterbiomass$FFG[greaterbiomass$Genus=="Sialis"]="Predator"
 greaterbiomass$FFG[greaterbiomass$Genus=="Simulium"]="Collector-Filterer"
 greaterbiomass$FFG[greaterbiomass$Genus=="Stratiomyidae"]="Collector-Gatherer"
 greaterbiomass$FFG[greaterbiomass$Genus=="Stylogomphus"]="Predator"
-greaterbiomass$FFG[greaterbiomass$Genus=="Tallaperla"]='Shredder"'
+greaterbiomass$FFG[greaterbiomass$Genus=="Tallaperla"]="Shredder"
 greaterbiomass$FFG[greaterbiomass$Genus=="Stenelmis"]="Scraper"
 greaterbiomass$FFG[greaterbiomass$Genus=="Stenonema"]="Scraper" 
 greaterbiomass$FFG[greaterbiomass$Genus=="Taeniopteryx"]="Shredder"
@@ -770,7 +770,7 @@ FFGgplot2 <- ggplot(data = meansites, aes(x = FFG, y = (log(mean.biomass)))) +
 print(FFGgplot2) # Doesn't really look like anything is happening here
 
 
-FFGgplot3 <- ggplot(data = meansites, aes(x = SC.Category, y = (log(mean.biomass)))) +
+FFGgplot3 <- ggplot(data = meansites, aes(x = Sample.Date, y = (log(mean.biomass)))) +
   facet_wrap(~FFG, ncol = 5, nrow = 5) +  # Facet by FFG
   geom_boxplot(fill = "white") +  # Set fill color for boxplot to white
   geom_point(aes(color = FFG), size = 2) +  # Assign color to points based on FFG
@@ -791,3 +791,474 @@ FFGgplot3 <- ggplot(data = meansites, aes(x = SC.Category, y = (log(mean.biomass
     legend.key = element_rect(fill = "white", color = "white")
   )
 print(FFGgplot3) # better way of showing what the previous graph does
+
+
+# boxplots to show that biomass isn't significantly different
+bioboxplot=ggplot(data=meansites,aes(x=SC.Level,y=(log(mean.biomass))))+ 
+  geom_boxplot()+
+  geom_point(aes(color=SC.Category),size=2)+
+  ylab(expression(Biomass(g/m^2)))+
+  xlab("")+
+  scale_colour_manual(values = c("REF" = "#70A494", "MID" = "#DE8A5A", "HIGH" = "#CA562C")) +
+  theme_bw()+
+  theme(axis.title=element_text(size=23),
+        axis.text=element_text(size=15),
+        panel.grid = element_blank(), 
+        axis.line=element_line(),
+        axis.text.x = element_text(angle = 90, hjust = 1,face="italic"),
+        legend.position="top",
+        legend.title = element_blank(),
+        legend.text = element_text(size=20),
+        legend.background = element_blank(),
+        legend.key=element_rect(fill="white",color="white"))
+
+bioboxplot # Log to see better
+
+#PROPORTIONS PARTY!------------------------------------
+
+meansites$SC.Category <- factor(meansites$SC.Category, levels = c("REF","MID","HIGH"))
+meansites$FFG <- factor(meansites$FFG, levels = c("Scraper","Shredder","Predator","Collector-Gatherer","Collector-Filterer"))
+meansites$SC.Level <- factor(meansites$SC.Level, levels = c("25","72","78","387","402","594","1119","1242","1457"))
+
+install.packages("rcartocolor")# Colorblind color schemes
+library(rcartocolor)
+display_carto_all()
+
+
+# Now to do actual proportions, scaling everything to 100% biomass for their respective categories
+
+# Now let's do it for sc cat, calculate total biomass for each SC cat
+total_biomass_cat <- meansites %>%
+  group_by(SC.Category) %>%
+  summarise(total_biomass = sum(mean.biomass)) # summing the mean biomass for each sc cat
+
+# Calculate proportions of total biomass for each FFG for each site
+df_proportions_cat <- meansites %>%
+  left_join(total_biomass_cat, by = "SC.Category") %>%
+  group_by(SC.Category, FFG) %>%
+  summarise(Proportion = sum(mean.biomass) / first(total_biomass)) # Summing mean biomass
+#for each FFG for each SC category and dividing it by summed mean biomass for each sc cat
+
+
+# Define a custom palette with desired colors
+
+my_colors = carto_pal(7, "Geyser") # to get hexcodes for geyser to assign FFGS to, for 
+#consistency in graphs I'll use for SFS
+my_colors
+ffg_colors <- c("Scraper" = "#008080", 
+                "Shredder" = "#CA562C", 
+                "Predator" = "#F6EDBD", 
+                "Collector-Gatherer" = "#DE8A5A", 
+                "Collector-Filterer" = "#70A494")  
+
+# Plot with specific colors assigned to each FFG using hexadecimal codes
+propgg_cat = ggplot(df_proportions_cat, aes(x = SC.Category, y = Proportion, fill = FFG)) +
+  geom_bar(stat = "identity") +
+  labs(x = "Specific Conductivity Category", y = "Proportion of Total Biomass", fill = "FFGs") +
+  scale_fill_manual(values = ffg_colors, name = "FFG") +  # Assign specific colors
+  theme_minimal()
+
+propgg_cat # oh my
+
+# Now let's do it for SC level, calculate total biomass for each SC Level
+total_biomass_sites <- meansites %>%
+  group_by(SC.Level) %>%
+  summarise(total_biomass = sum(mean.biomass)) # Summing the median biomass for each sc level,
+#replicates have already been averaged
+
+# Calculate proportions of total biomass for each FFG for each site
+df_proportions_sites <- meansites %>%
+  left_join(total_biomass_sites, by = "SC.Level") %>%
+  group_by(SC.Level, FFG) %>%
+  summarise(Proportion = sum(mean.biomass) / first(total_biomass)) # Summing median biomass
+#for each FFG for each SC category and dividing it by summed median biomass for each sc cat
+
+propgg_site <- ggplot(df_proportions_sites, aes(x = SC.Level, y = Proportion, fill = FFG)) +
+  geom_bar(stat = "identity", position = "stack") +
+  labs(x = "Site", y = "Proportion of Total Biomass", fill = "Functional Group") +
+  scale_fill_manual(values = ffg_colors, name = "FFG") +  # Assign specific colors
+  scale_y_continuous(labels = scales::percent) + 
+  theme_bw()+
+  theme(axis.title=element_text(size=15),
+        axis.text=element_text(size=15),
+        panel.grid = element_blank(), 
+        axis.line=element_line(),
+        axis.text.x = element_text(angle = 90, hjust = 1,face="italic"),
+        legend.position="right",
+        legend.title = element_blank(),
+        legend.text = element_text(size=13),
+        legend.background = element_blank(),
+        legend.key=element_rect(fill="white",color="white"))
+
+propgg_site # Nice!
+
+
+# Want to see continuous decline of scrapers in comparison to shredders
+filtered_data_ffg <- df_proportions_sites %>%
+  filter(FFG %in% c("Scraper", "Shredder"))
+
+# Plot the filtered data
+filtered_data_ffg$SC.Level <- as.numeric(as.character(filtered_data_ffg$SC.Level))
+
+propgg_site_scatter <- ggplot(filtered_data_ffg, aes(x = SC.Level, y = Proportion, color = FFG)) +
+  geom_point( size = 3) +  # Set alpha to control transparency
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(x = "Specific Conductivity", y = "Proportion of Total Biomass", color = "Functional Group") +
+  scale_color_manual(values = c("Scraper" = "#008080", "Shredder" = "#CA562C")) +  
+  theme_bw() +
+  theme(
+    axis.title = element_text(size = 15),
+    axis.text = element_text(size = 15),
+    panel.grid = element_blank(),
+    axis.line = element_line(),
+    axis.text.x = element_text(angle = 90, hjust = 1, face = "italic"),
+    legend.position = "right",
+    legend.title = element_blank(),
+    legend.text = element_text(size = 13),
+    legend.background = element_blank(),
+    legend.key = element_rect(fill = "white", color = "white")
+  ) +
+  scale_x_continuous(expand = c(0.05, 0.05)) +  # Adjust the expand parameter to add extra space
+  coord_cartesian(ylim = c(0, max(filtered_data_ffg$Proportion) * 1.1))  # Adjust y-axis limits
+
+propgg_site_scatter
+
+# Let's try % biomass-----------------------------------
+
+meansites$SC.Category <- factor(meansites$SC.Category, levels = c("REF","MID","HIGH"))
+meansites$FFG <- factor(meansites$FFG, levels = c("Scraper","Shredder","Predator","Collector-Gatherer","Collector-Filterer"))
+meansites$SC.Level <- factor(meansites$SC.Level, levels = c("25","72","78","387","402","594","1119","1242","1457"))
+
+
+my_colors = carto_pal(7, "Geyser") # to get hexcodes for geyser to assign FFGS to, for 
+#consistency in graphs I'll use for SFS
+my_colors
+ffg_colors <- c("Scraper" = "#008080", 
+                "Shredder" = "#CA562C", 
+                "Predator" = "#F6EDBD", 
+                "Collector-Gatherer" = "#DE8A5A", 
+                "Collector-Filterer" = "#70A494")  
+
+
+
+df_proportions_table <- biomassmeantable %>%
+  left_join(total_biomass_sites, by = "SC.Level") %>%
+  group_by(SC.Level, FFG, Replicate) %>% #getting proportion by FFG and Rep per site
+  summarise(Proportion = sum(mean.biomass) / first(total_biomass)) 
+
+df_filtered <- df_proportions_table %>%
+  filter(FFG %in% c("Scraper", "Shredder")) #just using scrapers and shredders
+
+# Calculate percentage biomass for each FFG
+df_filtered <- df_filtered %>%
+  mutate(percentage.biomass = Proportion* 100) #getting percent biomass
+
+# Plot box plots
+percent <- ggplot(df_filtered, aes(x = SC.Level, y = percentage.biomass, fill = FFG)) +
+  geom_boxplot() +  # Adjust color, fill, transparency, and width of boxplots
+  labs(x = "Salinity", y = "Percentage Biomass", fill = "FFGs") +
+  scale_fill_manual(values = ffg_colors, name = "FFG") +
+  theme_minimal() +
+  theme(
+    axis.title = element_text(size = 14),
+    axis.text = element_text(size = 12),
+    panel.grid = element_blank(),
+    axis.line = element_line(),
+    axis.text.x = element_text(angle = 90, hjust = 1, face = "italic"),
+    legend.position = "top",
+    legend.title = element_blank(),
+    legend.text = element_text(size = 12),
+    legend.background = element_blank(),
+    legend.key = element_rect(fill = "white", color = "white")
+  ) +
+  ylim(0, 100)  # Limit y-axis to 0-100
+
+percent
+
+
+
+#FFG NMDS attempts---------------------------
+#Let's try nmds again
+
+# Loading the appropariate packages
+library(vegan) # vegan to calculate distance matrices
+library(ggplot2) # ggplot for plotting
+library(tidyverse) 
+library(dplyr)
+library(rcartocolor)
+
+aggregated_df_ffg <- aggregate(Biomass.Area.Corrected ~ Site + SC.Level + SC.Category + 
+                                 + Genus, data = greaterbiomass, FUN = median, na.rm = TRUE)
+
+biomass.nmds.ffg = aggregated_df_ffg %>% 
+  pivot_wider(
+    names_from = Genus, 
+    values_from = Biomass.Area.Corrected,
+  ) #ahhh ok it worked
+
+
+#  Rename the ID part of the matrix; take out the columns for streams, SC, season, genus
+greaterone.nmds.ffg <- biomass.nmds.ffg[,-c(1:3)]
+
+
+greaterone.nmds.ffg[is.na(greaterone.nmds.ffg)] <- 0
+
+# Running the NMDS for all taxa
+
+#  metaMDS integrates functions from several packages to perform NMDS.....
+#  ....including'vegdist' from the vegan package
+
+X <- metaMDS(greaterone.nmds.ffg, distance='bray', k=2, trymax=20, autotransform=FALSE, pc=FALSE, plot=FALSE)
+
+# Gives average stress
+X$stress
+
+# Gives weights that different species hold in the axis
+X$species
+
+# Basic plot of all of the points
+plot(X, display=c('sites', 'species'), choices=c(1,2), type='p')
+
+nmds_species <- scores(X, display = "species")
+
+nmds_sites <- scores(X, display = "sites")
+
+
+site.scores <- as.data.frame(scores(nmds_sites)) #Using the scores function from vegan to extract the site scores and convert to a data.frame
+# Add site column to dataframe
+site.scores$site <- rownames(site.scores)
+head(site.scores)
+
+species.scores <- as.data.frame(scores(nmds_species))  #Using the scores function from vegan to extract the species scores and convert to a data.frame
+species.scores$species <- rownames(species.scores)  # create a column of species, from the rownames of species.scores
+head(species.scores)
+
+
+# Plot NMDS using ggplot2
+ggplot(site.scores, aes(x = NMDS1, y = NMDS2, label = site)) +
+  geom_point() +
+  geom_text(hjust = 1, nudge_x = 0.05) +  # Add labels with slight offset
+  labs(x = "NMDS1", y = "NMDS2") +
+  theme_minimal()
+
+
+
+#Filtering based on top abundance
+
+Biomass_Sums <- colSums(greaterone.nmds.ffg)
+Biomass_Sums # Sums of all taxa
+
+Biomass_CutOff <- 150# Don't want taxa with an abundance less than 150
+
+TOP <- greaterone.nmds.ffg %>%
+  select(where( ~ sum(.) >= Biomass_CutOff))
+
+TOP # Taxa with abundances greater than 400
+colSums(TOP)
+
+# NMDS for top taxa only
+
+TOPScores <-metaMDS(TOP, distance='bray', k=2, trymax=20, autotransform=FALSE, pc=FALSE, plot=FALSE)
+TOPScores
+
+TOPScores$stress
+
+# Plotting species of top abundance in base plot
+
+Y <- scores(TOPScores, display="species") # Scores for top species
+Y # Scores for top taxa with species name
+
+plot(Y, type="n", xlim=c(-2, 2), ylim=c(-1.5, 1.5))
+text(Y[,1], Y[,2], rownames(Y), col="blue")
+all(colnames(TOP) == rownames(Y))
+
+Z <- scores(TOPScores, display="sites")
+Z # Scores for top taxa with site lens
+
+
+site.scores <- as.data.frame(scores(Z)) #Using the scores function from vegan to extract the site scores and convert to a data.frame
+rownames(site.scores) <- c("LLW", "LLC", "RIC", "HUR",
+                           "FRY", "RUT", "EAS", "CRO", "HCN") # Change sites from numbers to categorical
+
+site.scores$site <- factor(rownames(site.scores), levels = c("EAS", "CRO", "HCN", "FRY", "RUT", "HUR", "RIC", "LLW", "LLC"))
+
+# Reorder rows based on the new factor
+site.scores <- site.scores[order(site.scores$site), ]
+
+
+species.scores <- as.data.frame(scores(TOPScores, "species"))  #Using the scores function from vegan to extract the species scores and convert to a data.frame
+species.scores$species <- rownames(species.scores)  # create a column of species, from the rownames of species.scores
+head(species.scores)  #look at the data
+
+
+# Filter data for specific colors
+ref <- subset(site.scores, site %in% c("CRO", "EAS", "HCN"))
+mid <- subset(site.scores, site %in% c("HUR", "FRY", "RUT"))
+high <- subset(site.scores, site %in% c("RIC", "LLC", "LLW"))
+
+# Create polygons around points of specific colors
+TOPPlott <- ggplot() +    
+  geom_polygon(data = ref, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#70A494", alpha = 0.3) +
+  geom_polygon(data = mid, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#EDBB8A", alpha = 0.3) +
+  geom_polygon(data = high, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#CA562C", alpha = 0.3) +
+  geom_text(data = species.scores, aes(x = NMDS1, y = NMDS2, label = species), alpha = 0.5, vjust = 0.5, color = "grey") +   
+  geom_point(data = site.scores, aes(x = NMDS1, y = NMDS2, color = site), size = 3) + 
+  geom_text(data = site.scores, aes(x = NMDS1, y = NMDS2, label = site), size = 4, vjust = 0.5) +
+  scale_colour_manual(values = c("CRO" = "#70A494", "EAS" = "#70A494", "HCN" = "#70A494",
+                                 "HUR" = "#EDBB8A", "FRY" = "#EDBB8A", "RUT" = "#EDBB8A", 
+                                 "RIC" = "#CA562C", "LLC" = "#CA562C", "LLW" = "#CA562C")) +
+  coord_equal() +
+  theme_bw() +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  scale_x_continuous(name = "NMDS1", limits = c(-2, 2)) +
+  scale_y_continuous(name = "NMDS2", limits = c(-2, 2)) 
+
+# Display the plot
+print(TOPPlott)
+
+
+#Just scraper and shredder NMDS--------------------------------
+
+# Loading the appropariate packages
+library(vegan) # vegan to calculate distance matrices
+library(ggplot2) # ggplot for plotting
+library(tidyverse) 
+library(dplyr)
+
+aggregated_df_ffg_filter <- subset(greaterbiomass, FFG %in% c("Scraper", "Shredder"))
+
+aggregated_df_ffg_filter <- aggregate(Biomass.Area.Corrected ~ Site + SC.Level + SC.Category + 
+                                        + Genus, data = aggregated_df_ffg_filter, FUN = median, na.rm = TRUE)
+
+
+biomass.nmds.ffg.filter <- aggregated_df_ffg_filter %>% 
+  pivot_wider(
+    names_from = Genus, 
+    values_from = Biomass.Area.Corrected,
+  )
+
+
+#  Rename the ID part of the matrix; take out the columns for streams, SC, season, genus
+greaterone.nmds.ffg.filter <- biomass.nmds.ffg.filter[,-c(1:3)]
+
+
+greaterone.nmds.ffg.filter[is.na(greaterone.nmds.ffg.filter)] <- 0
+
+# Running the NMDS for all taxa
+
+#  metaMDS integrates functions from several packages to perform NMDS.....
+#  ....including'vegdist' from the vegan package
+
+X <- metaMDS(greaterone.nmds.ffg.filter, distance='bray', k=2, trymax=20, autotransform=FALSE, pc=FALSE, plot=FALSE)
+
+# Gives average stress
+X$stress
+
+# Gives weights that different species hold in the axis
+X$species
+
+# Basic plot of all of the points
+plot(X, display=c('sites', 'species'), choices=c(1,2), type='p')
+
+nmds_species <- scores(X, display = "species")
+
+nmds_sites <- scores(X, display = "sites")
+
+
+site.scores <- as.data.frame(scores(nmds_sites)) #Using the scores function from vegan to extract the site scores and convert to a data.frame
+# Add site column to dataframe
+site.scores$site <- rownames(site.scores)
+head(site.scores)
+
+species.scores <- as.data.frame(scores(nmds_species))  #Using the scores function from vegan to extract the species scores and convert to a data.frame
+species.scores$species <- rownames(species.scores)  # create a column of species, from the rownames of species.scores
+head(species.scores)
+
+
+# Plot NMDS using ggplot2
+ggplot(site.scores, aes(x = NMDS1, y = NMDS2, label = site)) +
+  geom_point() +
+  geom_text(hjust = 1, nudge_x = 0.05) +  # Add labels with slight offset
+  labs(x = "NMDS1", y = "NMDS2") +
+  theme_minimal()
+
+
+
+#Filtering based on top abundance
+
+Biomass_Sums <- colSums(greaterone.nmds.ffg.filter)
+Biomass_Sums # Sums of all taxa
+
+Biomass_CutOff <- 100 # Don't want taxa with an abundance less than 150
+
+TOP <- greaterone.nmds.ffg.filter %>%
+  select(where( ~ sum(.) >= Biomass_CutOff))
+
+TOP # Taxa with abundances greater than 400
+colSums(TOP)
+
+# NMDS for top taxa only
+
+TOPScores <-metaMDS(TOP, distance='bray', k=2, trymax=20, autotransform=FALSE, pc=FALSE, plot=FALSE)
+TOPScores
+
+TOPScores$stress
+
+# Plotting species of top abundance in base plot
+
+Y <- scores(TOPScores, display="species") # Scores for top species
+Y # Scores for top taxa with species name
+
+plot(Y, type="n", xlim=c(-2, 2), ylim=c(-1.5, 1.5))
+text(Y[,1], Y[,2], rownames(Y), col="blue")
+all(colnames(TOP) == rownames(Y))
+
+Z <- scores(TOPScores, display="sites")
+Z # Scores for top taxa with site lens
+
+
+site.scores <- as.data.frame(scores(Z)) #Using the scores function from vegan to extract the site scores and convert to a data.frame
+rownames(site.scores) <- c("LLW", "LLC", "RIC", "HUR",
+                           "FRY", "RUT", "EAS", "CRO", "HCN") # Change sites from numbers to categorical
+
+site.scores$site <- factor(rownames(site.scores), levels = c("EAS", "CRO", "HCN", "FRY", "RUT", "HUR", "RIC", "LLW", "LLC"))
+
+# Reorder rows based on the new factor
+site.scores <- site.scores[order(site.scores$site), ]
+
+
+species.scores <- as.data.frame(scores(TOPScores, "species"))  #Using the scores function from vegan to extract the species scores and convert to a data.frame
+species.scores$species <- rownames(species.scores)  # create a column of species, from the rownames of species.scores
+head(species.scores)  #look at the data
+
+
+
+# Filter data for specific colors
+ref <- subset(site.scores, site %in% c("CRO", "EAS", "HCN"))
+mid <- subset(site.scores, site %in% c("HUR", "FRY", "RUT"))
+high <- subset(site.scores, site %in% c("RIC", "LLC", "LLW"))
+
+# Create polygons around points of specific colors
+TOPPlott <- ggplot() +    
+  geom_polygon(data = ref, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#70A494", alpha = 0.3) +
+  geom_polygon(data = mid, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#EDBB8A", alpha = 0.3) +
+  geom_polygon(data = high, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#CA562C", alpha = 0.3) +
+  geom_text(data = species.scores, aes(x = NMDS1, y = NMDS2, label = species), alpha = 0.5, vjust = 0.5, color = "grey") +   
+  geom_point(data = site.scores, aes(x = NMDS1, y = NMDS2, color = site), size = 3) + 
+  geom_text(data = site.scores, aes(x = NMDS1, y = NMDS2, label = site), size = 4, vjust = 1.5) +
+  scale_colour_manual(values = c("CRO" = "#70A494", "EAS" = "#70A494", "HCN" = "#70A494",
+                                 "HUR" = "#EDBB8A", "FRY" = "#EDBB8A", "RUT" = "#EDBB8A", 
+                                 "RIC" = "#CA562C", "LLC" = "#CA562C", "LLW" = "#CA562C")) +
+  coord_equal() +
+  theme_bw() +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  scale_x_continuous(name = "NMDS1", limits = c(-3,3)) +
+  scale_y_continuous(name = "NMDS2", limits = c(-3, 3)) 
+
+# Display the plot
+print(TOPPlott)
+
+
+
+
+

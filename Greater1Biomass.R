@@ -708,6 +708,119 @@ greaterbiomass$FFG[greaterbiomass$Genus=="Wormaldia"]="Collector-Filterer"
 greaterbiomass$FFG[greaterbiomass$Genus=="Zoraena"]="Predator"
 
 
+
+# Now, adding synchronisty. Poor = asynchronous, Well = synchronous, some family assumptions
+# made based on genus
+
+greaterbiomass$SYNC[greaterbiomass$Genus=="Acerpenna"] ="Asynchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Acentrella"] = "Asynchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Acroneuria"]="Asynchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Allocapnia"]="Synchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Allognasta"]=""
+greaterbiomass$SYNC[greaterbiomass$Genus=="Alloperla"]="Synchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Ameletus"]="Synchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Amphinemura"]="Synchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Antocha"]="Asynchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Atherix"]="Synchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Attenella"]="Synchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Baetidae"]="Asynchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Baetis"]="Asynchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Baetisca"]="Synchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Boyeria"]="Synchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Calopteryx"]=="Synchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Capniidae"]="Synchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Ceratopogonidae"]=""
+greaterbiomass$SYNC[greaterbiomass$Genus=="Cernotina"]="NA"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Chauloides"]="NA"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Chelifera"]="Synchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Chimarra"]="Synchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Cheumatopsyche"]="Synchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Chironomidae"]=""
+greaterbiomass$SYNC[greaterbiomass$Genus=="Chironomini"]="NA"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Circulionidae"]=""
+greaterbiomass$SYNC[greaterbiomass$Genus=="Collembola"]=""
+greaterbiomass$SYNC[greaterbiomass$Genus=="Cyrnellus"]="Synchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Dicranota"]="Asynchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Diplectrona"]="Synchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Discocerina"]="NA"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Dixa"]="Synchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Dixella"]="Synchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Dolophilodes"]="Synchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Ectopria"]="Synchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Eloeophila"]="NA"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Epeorus"]="Synchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Eriopterini"]="Asynchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Ephemera"]="Asynchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Ephemerellidae"]="Synchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Eurylophella"]="Synchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Glossosoma"]="Synchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Goera"]="Synchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Gomphus"]="Synchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Gyrinus"]="Synchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Helichus"]="Asynchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Hemiptera"]=""
+greaterbiomass$SYNC[greaterbiomass$Genus=="Heptageniidae"]=""
+greaterbiomass$SYNC[greaterbiomass$Genus=="Hetaerina"]="Synchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Hexatoma"]="Asynchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Hydrachnia"]=""
+greaterbiomass$SYNC[greaterbiomass$Genus=="Hydatophylax"]="Synchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Hydropsyche"]="Synchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Isonychia"]="Asynchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Isoperla"]="Synchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Langessa"]=""
+greaterbiomass$SYNC[greaterbiomass$Genus=="Lanthus"]="Synchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Leptophlebiidae"]=""
+greaterbiomass$SYNC[greaterbiomass$Genus=="Lepidostoma"]= "Synchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Leuctra"]="Synchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Leuctridae"]="Synchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Limnephilidae"]="Asynchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Limnophila"]= "Asynchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Limoniidae"]= ""
+greaterbiomass$SYNC[greaterbiomass$Genus=="Lypodiversa"]=""
+greaterbiomass$SYNC[greaterbiomass$Genus=="Micrasema"]="Synchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Microvelia"]="Synchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Molophilus"]="Asynchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Neocleon"]=""
+greaterbiomass$SYNC[greaterbiomass$Genus=="Neophylax"]="Synchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Neoplasta"]="Synchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Nigronia"]="Synchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Oligochaeta"]=""
+greaterbiomass$SYNC[greaterbiomass$Genus=="Optioservus"]="Asynchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Oreogeton"]="Asynchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Orthocladine"]="Asynchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Oulimnius"]="Asynchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Paracapnia"]="Synchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Paraleptophlebiidae"]="Asynchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Polycentropodidae"]="Synchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Polycentropus"]="Synchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Probezzia"]="Asynchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Prodaticus"]=""
+greaterbiomass$SYNC[greaterbiomass$Genus=="Prosimulium"]="Synchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Psephenus"]="Synchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Pseudolimnophila"]="Asynchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Psychodini"]=""
+greaterbiomass$SYNC[greaterbiomass$Genus=="Pteronarcys"]="Synchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Paracapnia"]="Synchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Remenus"]="Synchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Rhagovelia"]="Synchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Rhyacophila"]="Synchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Prostoia"]="Synchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Sialis"]="Synchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Simulium"]="Synchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Stratiomyidae"]=""
+greaterbiomass$SYNC[greaterbiomass$Genus=="Stylogomphus"]="Synchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Tallaperla"]="Asynchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Stenelmis"]="Asynchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Stenonema"]="Asynchronous" 
+greaterbiomass$SYNC[greaterbiomass$Genus=="Taeniopteryx"]="Synchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Tanypodinae"]=""
+greaterbiomass$SYNC[greaterbiomass$Genus=="Tanytarsini"]=""
+greaterbiomass$SYNC[greaterbiomass$Genus=="Tipula"]="Asynchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Triacanthagyna"]=""
+greaterbiomass$SYNC[greaterbiomass$Genus=="Wormaldia"]="Synchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Zoraena"]=""
+
+
 #taking out data points for things with no assigned FFGs (adults, pupa, terrestrial)
 greaterbiomass <- greaterbiomass[!is.na(greaterbiomass$FFG), ]
 
@@ -717,7 +830,7 @@ greaterbiomass <- greaterbiomass[greaterbiomass$Biomass.Area.Corrected != 0,]
 
 # Summarizing means of each FFG in each replicate for each stream
 biomassmeantable = greaterbiomass %>% 
-  group_by(Sample.Month, SC.Category,SC.Level,Site,Replicate,FFG ) %>% 
+  group_by(Sample.Month, SC.Category,SC.Level,Site,Replicate,FFG, SYNC ) %>% 
   summarise(mean.biomass=mean(Biomass.Area.Corrected,na.rm=FALSE))
 
 biomassmeantable 
@@ -730,7 +843,7 @@ greaterbiomass %>%
 
 # Now, averaging the replicates from each stream
 meansites = biomassmeantable %>% 
-  group_by(Sample.Month,SC.Category,SC.Level,Site,FFG ) %>% 
+  group_by(Sample.Month,SC.Category,SC.Level,Site,FFG, SYNC ) %>% 
   summarise(mean.biomass=mean(mean.biomass,na.rm=FALSE))
 
 meansites # Essentially, the means of the means. I QAQCed this manually and checked that
@@ -895,7 +1008,7 @@ total_biomass_cat <- meansites %>%
 # Calculate proportions of total biomass for each FFG for each site
 df_proportions_cat <- meansites %>%
   left_join(total_biomass_cat, by = "SC.Category") %>%
-  group_by(SC.Category, FFG) %>%
+  group_by(SC.Category, FFG, SYNC) %>%
   summarise(Proportion = sum(mean.biomass) / first(total_biomass)) # Summing mean biomass
 #for each FFG for each SC category and dividing it by summed mean biomass for each sc cat
 
@@ -909,7 +1022,9 @@ ffg_colors <- c("Scraper" = "#008080",
                 "Shredder" = "#CA562C", 
                 "Predator" = "#F6EDBD", 
                 "Collector-Gatherer" = "#DE8A5A", 
-                "Collector-Filterer" = "#70A494")  
+                "Collector-Filterer" = "#70A494") 
+
+sync_colors <- c("Asynchronous" = "#CA562C","Synchronous" = "#70A494") 
 
 # Plot with specific colors assigned to each FFG using hexadecimal codes
 propgg_cat = ggplot(df_proportions_cat, aes(x = SC.Category, y = Proportion, fill = FFG)) +
@@ -923,20 +1038,20 @@ propgg_cat # oh my
 # Now let's do it for SC level, calculate total biomass for each SC Level
 total_biomass_sites <- meansites %>%
   group_by(SC.Level) %>%
-  summarise(total_biomass = sum(mean.biomass)) # Summing the median biomass for each sc level,
+  summarise(total_biomass = sum(mean.biomass)) # Summing the mean biomass for each sc level,
 #replicates have already been averaged
 
 # Calculate proportions of total biomass for each FFG for each site
 df_proportions_sites <- meansites %>%
   left_join(total_biomass_sites, by = "SC.Level") %>%
-  group_by(SC.Level, FFG) %>%
-  summarise(Proportion = sum(mean.biomass) / first(total_biomass)) # Summing median biomass
-#for each FFG for each SC category and dividing it by summed median biomass for each sc cat
+  group_by(SC.Level, FFG, SYNC) %>%
+  summarise(Proportion = sum(mean.biomass) / first(total_biomass)) # Summing mean biomass
+#for each FFG for each SC category and dividing it by summed mean biomass for each sc cat
 
-propgg_site <- ggplot(df_proportions_sites, aes(x = SC.Level, y = Proportion, fill = FFG)) +
+propgg_site <- ggplot(df_proportions_sites, aes(x = SC.Level, y = Proportion, fill = SYNC)) +
   geom_bar(stat = "identity", position = "stack") +
   labs(x = "Site", y = "Proportion of Total Biomass", fill = "Functional Group") +
-  scale_fill_manual(values = ffg_colors, name = "FFG") +  # Assign specific colors
+  scale_fill_manual(values = sync_colors, name = "SYNC") +  # Assign specific colors
   scale_y_continuous(labels = scales::percent) + 
   theme_bw()+
   theme(axis.title=element_text(size=15),

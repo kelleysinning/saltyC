@@ -1068,6 +1068,56 @@ propgg_site <- ggplot(df_proportions_sites, aes(x = SC.Level, y = Proportion, fi
 propgg_site # Nice!
 
 
+
+
+# COMBINED TRAITS WHOO
+
+df_combo_scrapsync <- meansites[meansites$FFG == "Scraper" & meansites$SYNC == "Synchronous", ]
+
+# Filter the data to include only relevant groups
+combo_proportions <- meansites %>%
+  filter((FFG == "Scraper" & SYNC == "Synchronous") |
+           (FFG == "Shredder" & SYNC == "Asynchronous"))
+
+# Calculate total biomass at each time point
+total_biomass <- combo_proportions %>%
+  group_by(Sample.Month) %>%
+  summarise(TotalBiomass = sum(mean.biomass))
+
+# Calculate the biomass contributions of each group
+group_biomass <- combo_proportions %>%
+  group_by(Sample.Month, FFG, SYNC) %>%
+  summarise(GroupBiomass = sum(mean.biomass))
+
+# Merge total biomass with group biomass
+df_merged <- merge(group_biomass, total_biomass, by = "Sample.Month")
+
+# Calculate the proportion of biomass for each group
+df_merged <- df_merged %>%
+  mutate(Proportion = GroupBiomass / TotalBiomass)
+
+# Graph proportions
+ggplot(df_merged, aes(x = Sample.Month, y = Proportion, fill = interaction(FFG, SYNC))) +
+  geom_bar(stat = "identity", position = "stack") +
+  labs(x = "SC Category",
+       y = "Proportion of Biomass",
+       color = "Group") +
+  scale_y_continuous(labels = scales::percent) +
+  theme_bw()+
+  theme(axis.title=element_text(size=15),
+        axis.text=element_text(size=15),
+        panel.grid = element_blank(), 
+        axis.line=element_line(),
+        axis.text.x = element_text(angle = 90, hjust = 1,face="italic"),
+        legend.position="right",
+        legend.title = element_blank(),
+        legend.text = element_text(size=13),
+        legend.background = element_blank(),
+        legend.key=element_rect(fill="white",color="white")) #WOAH
+
+
+
+
 # Want to see continuous decline of scrapers in comparison to shredders
 filtered_data_ffg <- df_proportions_sites %>%
   filter(FFG %in% c("Scraper", "Shredder"))

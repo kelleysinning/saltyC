@@ -77,6 +77,12 @@ RICmay=read.csv("RIC_May.2024_SUMMARY.csv")
 EASjune=read.csv("EAS_June.2024_SUMMARY.csv")
 FRYjune=read.csv("FRY_June.2024_SUMMARY.csv")
 RICjune=read.csv("RIC_June.2024_SUMMARY.csv")
+# July monthly
+EASjuly=read.csv("EAS_July.2024_SUMMARY.csv")
+FRYjuly=read.csv("FRY_July.2024_SUMMARY.csv")
+RICjuly=read.csv("RIC_July.2024_SUMMARY.csv")
+
+
 
 
 # Adding a column with site name bc once we merge we won't know
@@ -138,6 +144,10 @@ RICmay$Site <- c("RIC")
 EASjune$Site <- c("EAS")
 FRYjune$Site <- c("FRY")
 RICjune$Site <- c("RIC")
+# July monthly
+EASjuly$Site <- c("EAS")
+FRYjuly$Site <- c("FRY")
+RICjuly$Site <- c("RIC")
 
 # Adding a column with sample month so the dates aren't weird
 # September monthly
@@ -198,6 +208,10 @@ RICmay$Sample.Month <- c("May")
 EASjune$Sample.Month <- c("June")
 FRYjune$Sample.Month <- c("June")
 RICjune$Sample.Month <- c("June")
+# July monthly
+EASjuly$Sample.Month <- c("July")
+FRYjuly$Sample.Month <- c("July")
+RICjuly$Sample.Month <- c("July")
 
 
 # Adding a column with SC level bc once we merge we won't know
@@ -259,6 +273,10 @@ RICmay$SC.Level <- c("1457")
 EASjune$SC.Level <- c("25")
 FRYjune$SC.Level <- c("402")
 RICjune$SC.Level <- c("1457")
+# July monthly
+EASjuly$SC.Level <- c("25")
+FRYjuly$SC.Level <- c("402")
+RICjuly$SC.Level <- c("1457")
 
 
 
@@ -321,6 +339,10 @@ RICmay$SC.Category <- c("HIGH")
 EASjune$SC.Category <- c("REF")
 FRYjune$SC.Category <- c("MID")
 RICjune$SC.Category <- c("HIGH")
+# July monthly
+EASjuly$SC.Category <- c("REF")
+FRYjuly$SC.Category <- c("MID")
+RICjuly$SC.Category <- c("HIGH")
 
 
 # Let's re-arrange the columns so these new additions are at the front
@@ -478,6 +500,16 @@ FRYjune<- FRYjune %>%
 RICjune<- RICjune %>% 
   select(c("Site","SC.Category","SC.Level","Sample.Date","Fraction",
            "Replicate","Order","Family","Genus"), everything())
+# July monthly
+EASjuly<- EASjuly %>% 
+  select(c("Site","SC.Category","SC.Level","Sample.Date","Fraction",
+           "Replicate","Order","Family","Genus"), everything())
+FRYjuly<- FRYjuly %>% 
+  select(c("Site","SC.Category","SC.Level","Sample.Date","Fraction",
+           "Replicate","Order","Family","Genus"), everything())
+RICjuly<- RICjuly %>% 
+  select(c("Site","SC.Category","SC.Level","Sample.Date","Fraction",
+           "Replicate","Order","Family","Genus"), everything())
 
 
 
@@ -542,6 +574,10 @@ RICmay.totals <- select(RICmay, all_of(columns_to_keep))
 EASjune.totals <- select(EASjune, all_of(columns_to_keep))
 FRYjune.totals <- select(FRYjune, all_of(columns_to_keep))
 RICjune.totals <- select(RICjune, all_of(columns_to_keep))
+# June monthly
+EASjuly.totals <- select(EASjuly, all_of(columns_to_keep))
+FRYjuly.totals <- select(FRYjuly, all_of(columns_to_keep))
+RICjuly.totals <- select(RICjuly, all_of(columns_to_keep))
 
 
 
@@ -557,7 +593,8 @@ list_of_greater_totals <- list(EASsept.totals, FRYsept.totals,RICsept.totals,
                            FRYmarch.totals,RICmarch.totals,EASapril.totals, FRYapril.totals,
                            RICapril.totals,CROmay.totals, EASmay.totals,HCNmay.totals, 
                            FRYmay.totals, HURmay.totals, RUTmay.totals, LLWmay.totals, LLCmay.totals,
-                           RICmay.totals,EASjune.totals, FRYjune.totals,RICjune.totals) 
+                           RICmay.totals,EASjune.totals, FRYjune.totals,RICjune.totals, 
+                           EASjuly.totals, FRYjuly.totals,RICjuly.totals) 
 
 greaterbiomass <- do.call(rbind, list_of_greater_totals) #THIS WORKS
 
@@ -581,10 +618,14 @@ greaterbiomass <- greaterbiomass %>%
 greaterbiomass <- greaterbiomass %>%
   mutate(Genus = ifelse(Genus == "Stenelmis (L)", "Stenelmis", Genus))
 greaterbiomass <- greaterbiomass %>%
+  mutate(Genus = ifelse(Genus == "Paraleptophlebiidae", "Paraleptophlebia", Genus))
+greaterbiomass <- greaterbiomass %>%
   mutate(Fraction = ifelse(Fraction == ">1", "> 1", Fraction))
 greaterbiomass <- greaterbiomass %>%
   mutate(Biomass = ifelse(Genus == "Acroneuria", Biomass / 10, Biomass)) # realized i had
 # decimal in wrong place and needed to move one spot to the left
+greaterbiomass <- greaterbiomass %>%
+  mutate(Biomass = ifelse(Genus == "Paraleptophlebia", Biomass / 10, Biomass))
 
 # Finally, let's add a new column to correct biomass by area
 greaterbiomass <- greaterbiomass %>% mutate(Biomass.Area.Corrected = Biomass*Density)
@@ -639,6 +680,7 @@ greaterbiomass$FFG[greaterbiomass$Genus=="Eriopterini"]="Collector-Gatherer"
 greaterbiomass$FFG[greaterbiomass$Genus=="Ephemera"]="Collector-Gatherer"
 greaterbiomass$FFG[greaterbiomass$Genus=="Ephemerellidae"]="Collector-Gatherer"
 greaterbiomass$FFG[greaterbiomass$Genus=="Eurylophella"]="Collector-Gatherer"
+greaterbiomass$FFG[greaterbiomass$Genus=="Gerris"]="Predator"
 greaterbiomass$FFG[greaterbiomass$Genus=="Glossosoma"]="Scraper"
 greaterbiomass$FFG[greaterbiomass$Genus=="Goera"]="Scraper"
 greaterbiomass$FFG[greaterbiomass$Genus=="Gomphus"]="Predator"
@@ -687,7 +729,7 @@ greaterbiomass$FFG[greaterbiomass$Genus=="Psephenus"]="Scraper"
 greaterbiomass$FFG[greaterbiomass$Genus=="Pseudolimnophila"]="Predator"
 greaterbiomass$FFG[greaterbiomass$Genus=="Psychodini"]="Collector-Gatherer"
 greaterbiomass$FFG[greaterbiomass$Genus=="Pteronarcys"]="Shredder"
-greaterbiomass$FFG[greaterbiomass$Genus=="Paracapnia"]="Shredder"
+greaterbiomass$FFG[greaterbiomass$Genus=="Pycnopsyche"]="Shredder"
 greaterbiomass$FFG[greaterbiomass$Genus=="Remenus"]="Predator"
 greaterbiomass$FFG[greaterbiomass$Genus=="Rhagovelia"]="Predator"
 greaterbiomass$FFG[greaterbiomass$Genus=="Rhyacophila"]="Predator"
@@ -753,6 +795,7 @@ greaterbiomass$SYNC[greaterbiomass$Genus=="Eriopterini"]="Asynchronous"
 greaterbiomass$SYNC[greaterbiomass$Genus=="Ephemera"]="Asynchronous"
 greaterbiomass$SYNC[greaterbiomass$Genus=="Ephemerellidae"]="Synchronous"
 greaterbiomass$SYNC[greaterbiomass$Genus=="Eurylophella"]="Synchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Gerris"]="Synchronous"
 greaterbiomass$SYNC[greaterbiomass$Genus=="Glossosoma"]="Synchronous"
 greaterbiomass$SYNC[greaterbiomass$Genus=="Goera"]="Synchronous"
 greaterbiomass$SYNC[greaterbiomass$Genus=="Gomphus"]="Synchronous"
@@ -800,7 +843,7 @@ greaterbiomass$SYNC[greaterbiomass$Genus=="Psephenus"]="Synchronous"
 greaterbiomass$SYNC[greaterbiomass$Genus=="Pseudolimnophila"]="Asynchronous"
 greaterbiomass$SYNC[greaterbiomass$Genus=="Psychodini"]=""
 greaterbiomass$SYNC[greaterbiomass$Genus=="Pteronarcys"]="Synchronous"
-greaterbiomass$SYNC[greaterbiomass$Genus=="Paracapnia"]="Synchronous"
+greaterbiomass$SYNC[greaterbiomass$Genus=="Pycnopsyche"]="Synchronous"
 greaterbiomass$SYNC[greaterbiomass$Genus=="Remenus"]="Synchronous"
 greaterbiomass$SYNC[greaterbiomass$Genus=="Rhagovelia"]="Synchronous"
 greaterbiomass$SYNC[greaterbiomass$Genus=="Rhyacophila"]="Synchronous"
@@ -849,6 +892,14 @@ meansites = biomassmeantable %>%
 meansites # Essentially, the means of the means. I QAQCed this manually and checked that
 # it is averaging the replicates
 
+# Make a new df with just quarterly info
+meansites.quarterly <- meansites %>%
+  filter(Sample.Month %in% c("October", "February", "May"))
+
+
+greaterbiomass.quarterly <- greaterbiomass %>% 
+  filter(Sample.Month %in% c("October", "February", "May"))
+
 # GG PLOT MANIA BEGINS---------------------------
 
 # First, let's order them correctly
@@ -856,7 +907,7 @@ meansites$Site <- factor(meansites$Site, levels = c("EAS", "CRO","HCN","FRY","HU
 meansites$SC.Category <- factor(meansites$SC.Category, levels = c("REF","MID","HIGH"))
 meansites$SC.Level <- factor(meansites$SC.Level, levels = c("25","72","78","387","402","594","1119","1242","1457"))
 meansites$FFG <- factor(meansites$FFG, levels = c("Scraper","Shredder","Predator","Collector-Gatherer","Collector-Filterer"))
-meansites$Sample.Month <- factor(meansites$Sample.Month, levels = c("September","October","November","December","January", "February", "March", "April", "May", "June"))
+meansites$Sample.Month <- factor(meansites$Sample.Month, levels = c("September","October","November","December","January", "February", "March", "April", "May", "June", "July"))
 
 biomassmeantable$Site <- factor(biomassmeantable$Site, levels = c("EAS", "CRO","HCN","FRY","HUR","RUT","LLC","LLW","RIC"))
 biomassmeantable$SC.Category <- factor(biomassmeantable$SC.Category, levels = c("REF","MID","HIGH"))
@@ -1030,7 +1081,7 @@ print(FFGgplot6) # This is actually not toooo hard to follow
 
 
 # Same thing but months are colored this time, can actually see patterns along the SC gradient
-my_colors = carto_pal(10, "Geyser") 
+my_colors = carto_pal(11, "Geyser") 
 
 FFGgplot7<- ggplot(data = meansites, aes(x = SC.Level, y = log(mean.biomass), fill = Sample.Month)) +
   geom_bar(stat = "identity", position = "dodge") +  # Bar graph with dodge position
@@ -1141,22 +1192,57 @@ df_proportions_sites <- meansites %>%
 
 propgg_site <- ggplot(df_proportions_sites, aes(x = SC.Level, y = Proportion, fill = FFG)) +
   geom_bar(stat = "identity", position = "stack") +
-  labs(x = "FFG", y = "Proportion of Total Biomass", fill = "Functional Group") +
+  labs(x = "SC Level", y = "Proportion of Total Biomass", fill = "Functional Group") +
   scale_fill_manual(values = ffg_colors, name = "FFG") +  # Assign specific colors
-  scale_y_continuous(labels = scales::percent) + 
-  theme_bw()+
-  theme(axis.title=element_text(size=15),
-        axis.text=element_text(size=15),
+  theme_bw() +
+  theme(axis.title = element_text(size = 15),
+        axis.text = element_text(size = 15),
         panel.grid = element_blank(), 
-        axis.line=element_line(),
-        axis.text.x = element_text(angle = 90, hjust = 1,face="italic"),
-        legend.position="right",
+        axis.line = element_line(),
+        axis.text.x = element_text(angle = 90, hjust = 1, face = "italic"),
+        legend.position = "right",
         legend.title = element_blank(),
-        legend.text = element_text(size=13),
+        legend.text = element_text(size = 13),
         legend.background = element_blank(),
-        legend.key=element_rect(fill="white",color="white"))
+        legend.key = element_rect(fill = "white", color = "white"))
 
-propgg_site # Can really see the scraper decline and shredder increas across the 
+propgg_site# Can really see the scraper decline and shredder increas across the 
+# gradient in this one
+
+
+
+# Quarterly sites only
+
+# Now let's do it for SC level, calculate total biomass for each SC Level
+total_biomass_sites <- meansites.quarterly %>%
+  group_by(SC.Level) %>%
+  summarise(total_biomass = sum(mean.biomass)) # Summing the mean biomass for each sc level,
+#replicates have already been averaged
+
+# Calculate proportions of total biomass for each FFG for each site
+df_proportions_sites <- meansites.quarterly %>%
+  left_join(total_biomass_sites, by = "SC.Level") %>%
+  group_by(SC.Level, FFG, SYNC) %>%
+  summarise(Proportion = sum(mean.biomass) / first(total_biomass)) # Summing mean biomass
+#for each FFG for each SC category and dividing it by summed mean biomass for each sc cat
+
+propgg_site <- ggplot(df_proportions_sites, aes(x = SC.Level, y = Proportion, fill = FFG)) +
+  geom_bar(stat = "identity", position = "stack") +
+  labs(x = "SC Level", y = "Proportion of Total Biomass", fill = "Functional Group") +
+  scale_fill_manual(values = ffg_colors, name = "FFG") +  # Assign specific colors
+  theme_bw() +
+  theme(axis.title = element_text(size = 15),
+        axis.text = element_text(size = 15),
+        panel.grid = element_blank(), 
+        axis.line = element_line(),
+        axis.text.x = element_text(angle = 90, hjust = 1, face = "italic"),
+        legend.position = "right",
+        legend.title = element_blank(),
+        legend.text = element_text(size = 13),
+        legend.background = element_blank(),
+        legend.key = element_rect(fill = "white", color = "white"))
+
+propgg_site# Can really see the scraper decline and shredder increas across the 
 # gradient in this one
 
 
@@ -1292,6 +1378,140 @@ ggplot(df_merged, aes(x = SC.Level, y = Proportion, color = interaction(FFG, SYN
 # Shredders/Acynchronous are defintiely having a subsidy
 
 
+
+
+
+
+
+# Now, with meansites.quarterly
+
+# Filter the data to include only relevant groups
+combo_proportions <- meansites.quarterly %>%
+  filter((FFG == "Scraper" & SYNC == "Synchronous") |
+           (FFG == "Shredder" & SYNC == "Asynchronous"))
+
+# Calculate total biomass at each time point
+total_biomass <- combo_proportions %>%
+  group_by(Sample.Month) %>%
+  summarise(TotalBiomass = sum(mean.biomass))
+
+# Calculate the biomass contributions of each group
+group_biomass <- combo_proportions %>%
+  group_by(Sample.Month, FFG, SYNC) %>%
+  summarise(GroupBiomass = sum(mean.biomass))
+
+# Merge total biomass with group biomass
+df_merged <- merge(group_biomass, total_biomass, by = "Sample.Month")
+
+# Calculate the proportion of biomass for each group
+df_merged <- df_merged %>%
+  mutate(Proportion = GroupBiomass / TotalBiomass)
+
+# Graph proportions
+ggplot(df_merged, aes(x = Sample.Month, y = Proportion, fill = interaction(FFG, SYNC))) +
+  geom_bar(stat = "identity", position = "stack") +
+  labs(x = "SC Category",
+       y = "Proportion of Biomass",
+       color = "Group") +
+  scale_y_continuous(labels = scales::percent) +
+  theme_bw()+
+  theme(axis.title=element_text(size=15),
+        axis.text=element_text(size=15),
+        panel.grid = element_blank(), 
+        axis.line=element_line(),
+        axis.text.x = element_text(angle = 90, hjust = 1,face="italic"),
+        legend.position="right",
+        legend.title = element_blank(),
+        legend.text = element_text(size=13),
+        legend.background = element_blank(),
+        legend.key=element_rect(fill="white",color="white")) #WOAH
+
+# Making it continuous
+ggplot(df_merged, aes(x = Sample.Month, y = Proportion, color = interaction(FFG, SYNC), group = interaction(FFG, SYNC))) +
+  geom_line(size = 1.2) +
+  geom_point(size = 3) +  
+  labs(x = "SC Category",
+       y = "Proportion of Biomass",
+       color = "Group") +
+  scale_y_continuous(labels = scales::percent) +
+  theme_bw() +
+  theme(axis.title = element_text(size = 15),
+        axis.text = element_text(size = 15),
+        panel.grid = element_blank(), 
+        axis.line = element_line(),
+        axis.text.x = element_text(angle = 90, hjust = 1, face = "italic"),
+        legend.position = "right",
+        legend.title = element_blank(),
+        legend.text = element_text(size = 13),
+        legend.background = element_blank(),
+        legend.key = element_rect(fill = "white", color = "white"))
+
+
+
+# Across SC level
+# Filter the data to include only relevant groups
+combo_proportions <- meansites.quarterly %>%
+  filter((FFG == "Scraper" & SYNC == "Synchronous") |
+           (FFG == "Shredder" & SYNC == "Asynchronous"))
+
+# Calculate total biomass at each time point
+total_biomass <- combo_proportions %>%
+  group_by(SC.Level) %>%
+  summarise(TotalBiomass = sum(mean.biomass))
+
+# Calculate the biomass contributions of each group
+group_biomass <- combo_proportions %>%
+  group_by(SC.Level, FFG, SYNC) %>%
+  summarise(GroupBiomass = sum(mean.biomass))
+
+# Merge total biomass with group biomass
+df_merged <- merge(group_biomass, total_biomass, by = "SC.Level")
+
+# Calculate the proportion of biomass for each group
+df_merged <- df_merged %>%
+  mutate(Proportion = GroupBiomass / TotalBiomass)
+
+# Graph proportions
+ggplot(df_merged, aes(x = SC.Level, y = Proportion, fill = interaction(FFG, SYNC))) +
+  geom_bar(stat = "identity", position = "stack") +
+  labs(x = "SC Category",
+       y = "Proportion of Biomass",
+       color = "Group") +
+  scale_y_continuous(labels = scales::percent) +
+  theme_bw()+
+  theme(axis.title=element_text(size=15),
+        axis.text=element_text(size=15),
+        panel.grid = element_blank(), 
+        axis.line=element_line(),
+        axis.text.x = element_text(angle = 90, hjust = 1,face="italic"),
+        legend.position="right",
+        legend.title = element_blank(),
+        legend.text = element_text(size=13),
+        legend.background = element_blank(),
+        legend.key=element_rect(fill="white",color="white")) #WOAH
+
+# Continuous
+ggplot(df_merged, aes(x = SC.Level, y = Proportion, color = interaction(FFG, SYNC), group = interaction(FFG, SYNC))) +
+  geom_line(size = 1.2) +
+  geom_point(size = 3) +  
+  labs(x = "SC Category",
+       y = "Proportion of Biomass",
+       color = "Group") +
+  scale_y_continuous(labels = scales::percent) +
+  theme_bw() +
+  theme(axis.title = element_text(size = 15),
+        axis.text = element_text(size = 15),
+        panel.grid = element_blank(), 
+        axis.line = element_line(),
+        axis.text.x = element_text(angle = 90, hjust = 1, face = "italic"),
+        legend.position = "right",
+        legend.title = element_blank(),
+        legend.text = element_text(size = 13),
+        legend.background = element_blank(),
+        legend.key = element_rect(fill = "white", color = "white"))
+# Shredders/Acynchronous are defintiely having a subsidy
+
+
 # Want to see continuous decline of scrapers in comparison to shredders
 filtered_data_ffg <- df_proportions_sites %>%
   filter(FFG %in% c("Scraper", "Shredder"))
@@ -1319,6 +1539,37 @@ propgg_site_scatter <- ggplot(filtered_data_ffg, aes(x = SC.Level, y = Proportio
   ) +
   scale_x_continuous(expand = c(0.05, 0.05)) +  # Adjust the expand parameter to add extra space
   coord_cartesian(ylim = c(0, max(filtered_data_ffg$Proportion) * 1.1))  # Adjust y-axis limits
+
+propgg_site_scatter
+
+
+# Want to see continuous decline of synchronoys in comparison to async
+filtered_data_sync <- df_proportions_sites %>%
+  filter(SYNC %in% c("Synchronous", "Asynchronous"))
+
+# Plot the filtered data
+filtered_data_sync$SC.Level <- as.numeric(as.character(filtered_data_sync$SC.Level))
+
+propgg_site_scatter <- ggplot(filtered_data_sync, aes(x = SC.Level, y = Proportion, color = SYNC)) +
+  geom_point( size = 3) +  # Set alpha to control transparency
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(x = "Specific Conductivity", y = "Proportion of Total Biomass", color = "SYNC") +
+  scale_color_manual(values = c("Synchronous" = "#008080", "Asynchronous" = "#CA562C")) +  
+  theme_bw() +
+  theme(
+    axis.title = element_text(size = 15),
+    axis.text = element_text(size = 15),
+    panel.grid = element_blank(),
+    axis.line = element_line(),
+    axis.text.x = element_text(angle = 90, hjust = 1, face = "italic"),
+    legend.position = "right",
+    legend.title = element_blank(),
+    legend.text = element_text(size = 13),
+    legend.background = element_blank(),
+    legend.key = element_rect(fill = "white", color = "white")
+  ) +
+  scale_x_continuous(expand = c(0.05, 0.05)) +  # Adjust the expand parameter to add extra space
+  coord_cartesian(ylim = c(0, max(filtered_data_sync$Proportion) * 1.1))  # Adjust y-axis limits
 
 propgg_site_scatter
 
@@ -1418,6 +1669,10 @@ greaterbiomass.nmds.final$species
 # Basic plot of all of the points
 plot(greaterbiomass.nmds.final, display=c('sites', 'species'), choices=c(1,2), type='p')
 
+nmds_species <- scores(greaterbiomass.nmds.final, display = "species")
+
+nmds_sites <- scores(greaterbiomass.nmds.final, display = "sites")
+
 # Scores
 site.scores <- as.data.frame(scores(nmds_sites)) #Using the scores function from vegan to extract the site scores and convert to a data.frame
 site.scores$site <- rownames(site.scores)# Add site column to dataframe
@@ -1429,15 +1684,13 @@ head(species.scores)
 
 
 #Filtering based on top abundance
-Biomass_Sums <- colSums(greaterbiomass.nmds.final)
+Biomass_Sums <- colSums(greaterbiomass.nmds.ID)
 Biomass_Sums # Sums of all taxa
 
-Biomass_CutOff <- 150# Don't want taxa with an abundance less than 150
+Biomass_CutOff <- 100# Don't want taxa with an abundance less than 150
 
-TOP <- greaterbiomass.nmds.final %>%
-  select(where( ~ sum(.) >= Biomass_CutOff))
-# Taxa with abundances greater than 150
-colSums(TOP)
+TOP <- greaterbiomass.nmds.ID %>%
+  select(where( ~ sum(.) >= Biomass_CutOff)) # Taxa with abundances greater than 150
 
 
 # NMDS for top taxa only
@@ -1466,17 +1719,17 @@ TOPPlot <- ggplot() +
   geom_polygon(data = ref, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#70A494", alpha = 0.3) +
   geom_polygon(data = mid, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#EDBB8A", alpha = 0.3) +
   geom_polygon(data = high, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#CA562C", alpha = 0.3) +
-  geom_text(data = species.scores, aes(x = NMDS1, y = NMDS2, label = species), alpha = 0.5, vjust = 0.5, color = "grey") +   
-  geom_point(data = site.scores, aes(x = NMDS1, y = NMDS2, color = site), size = 3) + 
-  geom_text(data = site.scores, aes(x = NMDS1, y = NMDS2, label = site), size = 4, vjust = 0.5) +
+  geom_text(data = TOPGenera, aes(x = NMDS1, y = NMDS2, label = species), alpha = 0.5, vjust = 0.5, color = "grey") +   
+  geom_point(data = TOPsites, aes(x = NMDS1, y = NMDS2, color = site), size = 3) + 
+  geom_text(data = TOPsites, aes(x = NMDS1, y = NMDS2, label = site), size = 4, vjust = 0.5) +
   scale_colour_manual(values = c("CRO" = "#70A494", "EAS" = "#70A494", "HCN" = "#70A494",
                                  "HUR" = "#EDBB8A", "FRY" = "#EDBB8A", "RUT" = "#EDBB8A", 
                                  "RIC" = "#CA562C", "LLC" = "#CA562C", "LLW" = "#CA562C")) +
   coord_equal() +
   theme_bw() +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
-  scale_x_continuous(name = "NMDS1", limits = c(-2, 2)) +
-  scale_y_continuous(name = "NMDS2", limits = c(-2, 2)) 
+  scale_x_continuous(name = "NMDS1", limits = c(-1, 1)) +
+  scale_y_continuous(name = "NMDS2", limits = c(-1, 1)) 
 
 # Display the plot
 print(TOPPlot)
@@ -1490,13 +1743,13 @@ library(ggplot2) # ggplot for plotting
 library(tidyverse) 
 library(dplyr)
 
-aggregated_df_ffg_filter <- subset(greaterbiomass, FFG %in% c("Scraper", "Shredder"))
+aggregated.df.ffg.filter <- subset(greaterbiomass, FFG %in% c("Scraper", "Shredder"))
 
-aggregated_df_ffg_filter <- aggregate(Biomass.Area.Corrected ~ Site + SC.Level + SC.Category + 
-                                        + Genus, data = aggregated_df_ffg_filter, FUN = median, na.rm = TRUE)
+aggregated.df.ffg.filter <- aggregate(Biomass.Area.Corrected ~ Site + SC.Level + SC.Category + 
+                                        + Genus, data = aggregated.df.ffg.filter, FUN = median, na.rm = TRUE)
 
 
-biomass.nmds.ffg.filter <- aggregated_df_ffg_filter %>% 
+biomass.nmds.ffg.filter <- aggregated.df.ffg.filter %>% 
   pivot_wider(
     names_from = Genus, 
     values_from = Biomass.Area.Corrected,
@@ -1514,103 +1767,71 @@ greaterone.nmds.ffg.filter[is.na(greaterone.nmds.ffg.filter)] <- 0
 #  metaMDS integrates functions from several packages to perform NMDS.....
 #  ....including'vegdist' from the vegan package
 
-X <- metaMDS(greaterone.nmds.ffg.filter, distance='bray', k=2, trymax=20, autotransform=FALSE, pc=FALSE, plot=FALSE)
+greaterone.nmds.ffg <- metaMDS(greaterone.nmds.ffg.filter, distance='bray', k=2, trymax=20, autotransform=FALSE, pc=FALSE, plot=FALSE)
 
 # Gives average stress
-X$stress
+greaterone.nmds.ffg$stress
 
 # Gives weights that different species hold in the axis
-X$species
+greaterone.nmds.ffg$species
+
 
 # Basic plot of all of the points
-plot(X, display=c('sites', 'species'), choices=c(1,2), type='p')
+plot(greaterone.nmds.ffg, display=c('sites', 'species'), choices=c(1,2), type='p')
 
-nmds_species <- scores(X, display = "species")
+nmds_species <- scores(greaterone.nmds.ffg, display = "species")
 
-nmds_sites <- scores(X, display = "sites")
+nmds_sites <- scores(greaterone.nmds.ffg, display = "sites")
 
-
+# Scores
 site.scores <- as.data.frame(scores(nmds_sites)) #Using the scores function from vegan to extract the site scores and convert to a data.frame
-# Add site column to dataframe
-site.scores$site <- rownames(site.scores)
+site.scores$site <- rownames(site.scores)# Add site column to dataframe
 head(site.scores)
 
-species.scores <- as.data.frame(scores(nmds_species))  #Using the scores function from vegan to extract the species scores and convert to a data.frame
-species.scores$species <- rownames(species.scores)  # create a column of species, from the rownames of species.scores
+species.scores <- as.data.frame(scores(nmds_species)) 
+species.scores$species <- rownames(species.scores)  
 head(species.scores)
 
 
-# Plot NMDS using ggplot2
-ggplot(site.scores, aes(x = NMDS1, y = NMDS2, label = site)) +
-  geom_point() +
-  geom_text(hjust = 1, nudge_x = 0.05) +  # Add labels with slight offset
-  labs(x = "NMDS1", y = "NMDS2") +
-  theme_minimal()
-
-
-
 #Filtering based on top abundance
-
 Biomass_Sums <- colSums(greaterone.nmds.ffg.filter)
 Biomass_Sums # Sums of all taxa
 
-Biomass_CutOff <- 100 # Don't want taxa with an abundance less than 150
+Biomass_CutOff <- 100# Don't want taxa with an abundance less than 150
 
 TOP <- greaterone.nmds.ffg.filter %>%
-  select(where( ~ sum(.) >= Biomass_CutOff))
+  select(where( ~ sum(.) >= Biomass_CutOff)) # Taxa with abundances greater than 150
 
-TOP # Taxa with abundances greater than 400
-colSums(TOP)
 
 # NMDS for top taxa only
-
 TOPScores <-metaMDS(TOP, distance='bray', k=2, trymax=20, autotransform=FALSE, pc=FALSE, plot=FALSE)
-TOPScores
-
 TOPScores$stress
 
-# Plotting species of top abundance in base plot
+# TOP Scores
 
-Y <- scores(TOPScores, display="species") # Scores for top species
-Y # Scores for top taxa with species name
+TOPGenera <- scores(TOPScores, display="species") # Scores for top species
+TOPGenera <- as.data.frame(TOPGenera)
+TOPGenera$species <- rownames(TOPGenera)  # create a column of species, from the rownames of TOPGenera
 
-plot(Y, type="n", xlim=c(-2, 2), ylim=c(-1.5, 1.5))
-text(Y[,1], Y[,2], rownames(Y), col="blue")
-all(colnames(TOP) == rownames(Y))
-
-Z <- scores(TOPScores, display="sites")
-Z # Scores for top taxa with site lens
-
-
-site.scores <- as.data.frame(scores(Z)) #Using the scores function from vegan to extract the site scores and convert to a data.frame
-rownames(site.scores) <- c("LLW", "LLC", "RIC", "HUR",
-                           "FRY", "RUT", "EAS", "CRO", "HCN") # Change sites from numbers to categorical
-
-site.scores$site <- factor(rownames(site.scores), levels = c("EAS", "CRO", "HCN", "FRY", "RUT", "HUR", "RIC", "LLW", "LLC"))
-
-# Reorder rows based on the new factor
-site.scores <- site.scores[order(site.scores$site), ]
-
-
-species.scores <- as.data.frame(scores(TOPScores, "species"))  #Using the scores function from vegan to extract the species scores and convert to a data.frame
-species.scores$species <- rownames(species.scores)  # create a column of species, from the rownames of species.scores
-head(species.scores)  #look at the data
-
-
+TOPsites <- scores(TOPScores, display="sites")
+TOPsites <- as.data.frame(TOPsites)
+rownames(TOPsites) <- c("RIC", "FRY", "EAS", "LLW",
+                        "LLC", "HUR", "RUT", "HCN", "CRO") # Change sites from numbers to categorical
+TOPsites$site <- rownames(TOPsites) 
 
 # Filter data for specific colors
-ref <- subset(site.scores, site %in% c("CRO", "EAS", "HCN"))
-mid <- subset(site.scores, site %in% c("HUR", "FRY", "RUT"))
-high <- subset(site.scores, site %in% c("RIC", "LLC", "LLW"))
+ref <- subset(TOPsites, site %in% c("CRO", "EAS", "HCN"))
+mid <- subset(TOPsites, site %in% c("HUR", "FRY", "RUT"))
+high <- subset(TOPsites, site %in% c("RIC", "LLC", "LLW"))
 
 # Create polygons around points of specific colors
 TOPPlott <- ggplot() +    
   geom_polygon(data = ref, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#70A494", alpha = 0.3) +
   geom_polygon(data = mid, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#EDBB8A", alpha = 0.3) +
   geom_polygon(data = high, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#CA562C", alpha = 0.3) +
-  geom_text(data = species.scores, aes(x = NMDS1, y = NMDS2, label = species), alpha = 0.5, vjust = 0.5, color = "grey") +   
-  geom_point(data = site.scores, aes(x = NMDS1, y = NMDS2, color = site), size = 3) + 
-  geom_text(data = site.scores, aes(x = NMDS1, y = NMDS2, label = site), size = 4, vjust = 1.5) +
+  geom_text(data = TOPGenera, aes(x = NMDS1, y = NMDS2, label = species), alpha = 0.5, vjust = 0.5, color = "grey") +   
+  geom_point(data = TOPsites, aes(x = NMDS1, y = NMDS2, color = site), size = 3) + 
+  geom_text(data = TOPsites, aes(x = NMDS1, y = NMDS2, label = site), size = 4, vjust = 1.5) +
   scale_colour_manual(values = c("CRO" = "#70A494", "EAS" = "#70A494", "HCN" = "#70A494",
                                  "HUR" = "#EDBB8A", "FRY" = "#EDBB8A", "RUT" = "#EDBB8A", 
                                  "RIC" = "#CA562C", "LLC" = "#CA562C", "LLW" = "#CA562C")) +
@@ -1622,6 +1843,515 @@ TOPPlott <- ggplot() +
 
 # Display the plot
 print(TOPPlott)
+
+
+# Trait combo NMDS--------------------------------
+
+# Loading the appropariate packages
+library(vegan) # vegan to calculate distance matrices
+library(ggplot2) # ggplot for plotting
+library(tidyverse) 
+library(dplyr)
+
+aggregated.df.combo.filter <- subset(greaterbiomass, 
+                                   (FFG == "Scraper" & SYNC == "Synchronous") | 
+                                     (FFG == "Shredder" & SYNC == "Asynchronous"))
+
+aggregated.df.combo.filter <- aggregate(Biomass.Area.Corrected ~ Site + SC.Level + SC.Category + 
+                                        + Genus, data = aggregated.df.combo.filter, FUN = median, na.rm = TRUE)
+
+
+biomass.nmds.combo.filter <- aggregated.df.combo.filter %>% 
+  pivot_wider(
+    names_from = Genus, 
+    values_from = Biomass.Area.Corrected,
+  )
+
+
+#  Rename the ID part of the matrix; take out the columns for streams, SC, season, genus
+greaterone.nmds.combo.filter <- biomass.nmds.combo.filter[,-c(1:4)]
+
+
+greaterone.nmds.combo.filter[is.na(greaterone.nmds.combo.filter)] <- 0
+
+# Running the NMDS for all taxa
+
+#  metaMDS integrates functions from several packages to perform NMDS.....
+#  ....including'vegdist' from the vegan package
+
+greaterone.nmds.combo <- metaMDS(greaterone.nmds.combo.filter, distance='bray', k=2, trymax=20, autotransform=FALSE, pc=FALSE, plot=FALSE)
+
+# Gives average stress
+greaterone.nmds.combo$stress
+
+# Gives weights that different species hold in the axis
+greaterone.nmds.combo$species
+
+
+# Basic plot of all of the points
+plot(greaterone.nmds.combo, display=c('sites', 'species'), choices=c(1,2), type='p')
+
+nmds_species <- scores(greaterone.nmds.combo, display = "species")
+
+
+
+nmds_sites <- scores(greaterone.nmds.combo, display = "sites")
+
+# Scores
+site.scores <- as.data.frame(scores(nmds_sites)) #Using the scores function from vegan to extract the site scores and convert to a data.frame
+site.scores$site <- rownames(site.scores)# Add site column to dataframe
+head(site.scores)
+
+species.scores <- as.data.frame(scores(nmds_species)) 
+species.scores$species <- rownames(species.scores)  
+head(species.scores)
+
+
+#Filtering based on top abundance
+Biomass_Sums <- colSums(greaterone.nmds.combo.filter)
+Biomass_Sums # Sums of all taxa
+
+Biomass_CutOff <- 100# Don't want taxa with an abundance less than 150
+
+
+
+TOP <- greaterone.nmds.combo.filter %>%
+  select(where( ~ sum(.) >= Biomass_CutOff)) # Taxa with abundances greater than 150
+
+# NMDS for top taxa only
+TOPScores <-metaMDS(TOP, distance='bray', k=2, trymax=20, autotransform=FALSE, pc=FALSE, plot=FALSE)
+TOPScores$stress
+
+# TOP Scores
+
+TOPGenera <- scores(TOPScores, display="species") # Scores for top species
+TOPGenera <- as.data.frame(TOPGenera)
+TOPGenera$species <- rownames(TOPGenera)  # create a column of species, from the rownames of TOPGenera
+
+TOPsites <- scores(TOPScores, display="sites")
+TOPsites <- as.data.frame(TOPsites)
+rownames(TOPsites) <- c("LLW", "RIC", "HUR", "FRY",
+                        "RUT", "EAS", "CRO", "HCN", "LLC") # Change sites from numbers to categorical
+TOPsites$site <- rownames(TOPsites) 
+
+# Filter data for specific colors
+ref <- subset(TOPsites, site %in% c("CRO", "EAS", "HCN"))
+mid <- subset(TOPsites, site %in% c("HUR", "FRY", "RUT"))
+high <- subset(TOPsites, site %in% c("RIC", "LLC", "LLW"))
+
+# Create polygons around points of specific colors
+TOPPlott <- ggplot() +    
+  geom_polygon(data = ref, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#70A494", alpha = 0.3) +
+  geom_polygon(data = mid, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#EDBB8A", alpha = 0.3) +
+  geom_polygon(data = high, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#CA562C", alpha = 0.3) +
+  geom_text(data = TOPGenera, aes(x = NMDS1, y = NMDS2, label = species), alpha = 0.5, vjust = 0.5, color = "grey") +   
+  geom_point(data = TOPsites, aes(x = NMDS1, y = NMDS2, color = site), size = 3) + 
+  geom_text(data = TOPsites, aes(x = NMDS1, y = NMDS2, label = site), size = 4, vjust = 1.5) +
+  scale_colour_manual(values = c("CRO" = "#70A494", "EAS" = "#70A494", "HCN" = "#70A494",
+                                 "HUR" = "#EDBB8A", "FRY" = "#EDBB8A", "RUT" = "#EDBB8A", 
+                                 "RIC" = "#CA562C", "LLC" = "#CA562C", "LLW" = "#CA562C")) +
+  coord_equal() +
+  theme_bw() +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  scale_x_continuous(name = "NMDS1", limits = c(-2,2)) +
+  scale_y_continuous(name = "NMDS2", limits = c(-2, 2)) 
+
+# Display the plot
+print(TOPPlott)
+
+# Quarterly comparisons------------------
+
+# Loading the appropariate packages
+library(vegan) # vegan to calculate distance matrices
+library(ggplot2) # ggplot for plotting
+library(tidyverse) 
+library(dplyr)
+library(rcartocolor)
+
+
+# Convert Sample.Month and Site to factors with specified levels
+greaterbiomass.quarterly$Sample.Month <- factor(greaterbiomass.quarterly$Sample.Month, levels = c("October", "February", "May"))
+greaterbiomass.quarterly$Site <- factor(greaterbiomass.quarterly$Site, levels = c("EAS", "CRO", "HCN", "HUR", "FRY", "RUT", "RIC", "LLW", "LLC"))
+
+# Aggregate the data
+aggregated.greaterone.quarterly <- aggregate(Biomass.Area.Corrected ~ Site + SC.Level + SC.Category + Sample.Month + Genus, 
+                                             data = greaterbiomass.quarterly, 
+                                             FUN = median, 
+                                             na.rm = TRUE)
+
+# Convert Sample.Month and Site to factors with specified levels again to ensure they are ordered correctly in the aggregated data
+aggregated.greaterone.quarterly$Sample.Month <- factor(aggregated.greaterone.quarterly$Sample.Month, levels = c("October", "February", "May"))
+aggregated.greaterone.quarterly$Site <- factor(aggregated.greaterone.quarterly$Site, levels = c("EAS", "CRO", "HCN", "HUR", "FRY", "RUT", "RIC", "LLW", "LLC"))
+
+# Pivot the data to wider format
+library(tidyr)
+greaterbiomass.nmds.quarterly <- aggregated.greaterone.quarterly %>%
+  pivot_wider(
+    names_from = Genus, 
+    values_from = Biomass.Area.Corrected,
+  )
+
+# Sort the dataframe by Site and Sample.Month
+greaterbiomass.nmds.quarterly <- greaterbiomass.nmds.quarterly[order(greaterbiomass.nmds.quarterly$Site, greaterbiomass.nmds.quarterly$Sample.Month), ]
+
+
+#  Rename the ID part of the matrix; take out the columns for streams, SC, season, genus
+greaterbiomass.nmds.ID.quarterly<- greaterbiomass.nmds.quarterly[,-c(1:4)]
+
+
+greaterbiomass.nmds.ID.quarterly[is.na(greaterbiomass.nmds.ID.quarterly)] <- 0
+
+
+
+#  metaMDS integrates functions from several packages to perform NMDS.....
+#  ....including'vegdist' from the vegan package
+
+greaterbiomass.nmds.quarterly.final <- metaMDS(greaterbiomass.nmds.ID.quarterly, distance='bray', k=2, trymax=20, autotransform=FALSE, pc=FALSE, plot=FALSE)
+
+# Gives average stress
+greaterbiomass.nmds.quarterly.final$stress
+
+# Gives weights that different species hold in the axis
+greaterbiomass.nmds.quarterly.final$species
+
+# Basic plot of all of the points
+plot(greaterbiomass.nmds.quarterly.final, display=c('sites', 'species'), choices=c(1,2), type='p')
+
+nmds_species <- scores(greaterbiomass.nmds.quarterly.final, display = "species")
+
+nmds_sites <- scores(greaterbiomass.nmds.quarterly.final, display = "sites")
+
+# Scores
+site.scores <- as.data.frame(scores(nmds_sites)) #Using the scores function from vegan to extract the site scores and convert to a data.frame
+site.scores$site <- rownames(site.scores)# Add site column to dataframe
+head(site.scores)
+
+species.scores <- as.data.frame(scores(nmds_species)) 
+species.scores$species <- rownames(species.scores)  
+head(species.scores)
+
+
+#Filtering based on top abundance
+Biomass_Sums <- colSums(greaterbiomass.nmds.ID.quarterly)
+Biomass_Sums # Sums of all taxa
+
+Biomass_CutOff <- 100# Don't want taxa with an abundance less than 150
+
+TOP <- greaterbiomass.nmds.ID.quarterly %>%
+  select(where( ~ sum(.) >= Biomass_CutOff)) # Taxa with abundances greater than 150
+
+
+# NMDS for top taxa only
+TOPScores <-metaMDS(TOP, distance='bray', k=2, trymax=20, autotransform=FALSE, pc=FALSE, plot=FALSE)
+TOPScores$stress
+
+# TOP Scores
+
+TOPGenera <- scores(TOPScores, display="species") # Scores for top species
+TOPGenera <- as.data.frame(TOPGenera)
+TOPGenera$species <- rownames(TOPGenera)  # create a column of species, from the rownames of TOPGenera
+
+TOPsites <- scores(TOPScores, display="sites")
+TOPsites <- as.data.frame(TOPsites)
+rownames(TOPsites) <- c("EAS.OCT", "EAS.FEB", "EAS.MAY", "CRO.OCT","CRO.FEB", "CRO.MAY", 
+                        "HCN.OCT", "HCN.FEB", "HCN.MAY","HUR.OCT", "HUR.FEB", "HUR.MAY", 
+                        "FRY.OCT","FRY.FEB", "FRY.MAY", "RUT.OCT", "RUT.FEB", "RUT.MAY",
+                        "RIC.OCT", "RIC.FEB", "RIC.MAY","LLW.OCT", "LLW.FEB","LLW.MAY", 
+                        "LLC.OCT", "LLC.FEB", "LLC.MAY") # Change sites from numbers to categorical
+TOPsites$site <- rownames(TOPsites) 
+
+# Filter data for specific colors
+ref <- subset(TOPsites, site %in% c("EAS.OCT", "EAS.FEB", "EAS.MAY", "CRO.OCT","CRO.FEB", "CRO.MAY", 
+                        "HCN.OCT", "HCN.FEB", "HCN.MAY"))
+mid <- subset(TOPsites, site %in% c("HUR.OCT", "HUR.FEB", "HUR.MAY", 
+                                    "FRY.OCT","FRY.FEB", "FRY.MAY", "RUT.OCT", "RUT.FEB", "RUT.MAY"))
+high <- subset(TOPsites, site %in% c("RIC.OCT", "RIC.FEB", "RIC.MAY","LLW.OCT", "LLW.FEB","LLW.MAY", 
+                                     "LLC.OCT", "LLC.FEB", "LLC.MAY"))
+
+
+# Create polygons around October sites
+
+# Filter some data first for the ellipses
+ref.oct <- subset(TOPsites, site %in% c("EAS.OCT", "CRO.OCT", "HCN.OCT"))
+mid.oct <- subset(TOPsites, site %in% c("HUR.OCT", "FRY.OCT", "RUT.OCT"))
+high.oct <- subset(TOPsites, site %in% c("RIC.OCT","LLW.OCT", "LLC.OCT"))
+
+TOPsites_oct <- TOPsites %>% 
+  filter(site %in% c("EAS.OCT", "CRO.OCT", "HCN.OCT", "HUR.OCT", "FRY.OCT", "RUT.OCT", "RIC.OCT", "LLW.OCT", "LLC.OCT"))
+
+install.packages("ggforce")
+library(ggforce)
+
+
+ TOPPlot <- ggplot() +    
+  geom_mark_ellipse(data = ref.oct, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#70A494", alpha = 0.3) +
+  geom_mark_ellipse(data = mid.oct, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#EDBB8A", alpha = 0.3) +
+  geom_mark_ellipse(data = high.oct, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#CA562C", alpha = 0.3) +
+  geom_text(data = TOPGenera, aes(x = NMDS1, y = NMDS2, label = species), alpha = 0.0, vjust = 0.5, color = "white") +   
+  geom_point(data = TOPsites_oct, aes(x = NMDS1, y = NMDS2, color = site), size = 3) + 
+  geom_text(data = TOPsites_oct, aes(x = NMDS1, y = NMDS2, label = site), size = 2, vjust = 0.5) +
+  scale_colour_manual(values = c(  "EAS.OCT" = "#70A494", "EAS.FEB" = "#70A49400", "EAS.MAY" = "#70A49400",
+                                   "CRO.OCT" = "#70A494", "CRO.FEB" = "#70A49400", "CRO.MAY" = "#70A49400", 
+                                   "HCN.OCT" = "#70A494", "HCN.FEB" = "#70A49400", "HCN.MAY" = "#70A49400",
+                                   "HUR.OCT" = "#EDBB8A", "HUR.FEB" = "#EDBB8A00", "HUR.MAY" = "#EDBB8A00",
+                                   "FRY.OCT" = "#EDBB8A", "FRY.FEB" = "#EDBB8A00", "FRY.MAY" = "#EDBB8A00", 
+                                   "RUT.OCT" = "#EDBB8A", "RUT.FEB" = "#EDBB8A00", "RUT.MAY" = "#EDBB8A00",
+                                   "RIC.OCT" = "#CA562C", "RIC.FEB" = "#CA562C00", "RIC.MAY" = "#CA562C00",
+                                   "LLW.OCT" = "#CA562C", "LLW.FEB" = "#CA562C00", "LLW.MAY" = "#CA562C00", 
+                                   "LLC.OCT" = "#CA562C", "LLC.FEB" = "#CA562C00", "LLC.MAY" = "#CA562C00")) +
+  coord_equal() +
+  theme_bw() +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  scale_x_continuous(name = "NMDS1", limits = c(-.15, .15)) +
+  scale_y_continuous(name = "NMDS2", limits = c(-.15, .15)) 
+
+# Display the plot
+print(TOPPlot)
+
+
+
+# Create polygons around February sites
+
+# Filter some data first for the ellipses
+ref.feb <- subset(TOPsites, site %in% c("EAS.FEB", "CRO.FEB", "HCN.FEB"))
+mid.feb <- subset(TOPsites, site %in% c("HUR.FEB", "FRY.FEB", "RUT.FEB"))
+high.feb <- subset(TOPsites, site %in% c("RIC.FEB","LLW.FEB", "LLC.FEB"))
+
+TOPsites_feb <- TOPsites %>% 
+  filter(site %in% c("EAS.FEB", "CRO.FEB", "HCN.FEB", "HUR.FEB", "FRY.FEB", "RUT.FEB", "RIC.FEB", "LLW.FEB", "LLC.FEB"))
+
+install.packages("ggforce")
+library(ggforce)
+
+
+TOPPlot <- ggplot() +    
+  geom_mark_ellipse(data = ref.feb, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#70A494", alpha = 0.3) +
+  geom_mark_ellipse(data = mid.feb, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#EDBB8A", alpha = 0.3) +
+  geom_mark_ellipse(data = high.feb, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#CA562C", alpha = 0.3) +
+  geom_text(data = TOPGenera, aes(x = NMDS1, y = NMDS2, label = species), alpha = 0.0, vjust = 0.5, color = "white") +   
+  geom_point(data = TOPsites_feb, aes(x = NMDS1, y = NMDS2, color = site), size = 3) + 
+  geom_text(data = TOPsites_feb, aes(x = NMDS1, y = NMDS2, label = site), size = 2, vjust = 0.5) +
+  scale_colour_manual(values = c(  "EAS.OCT" = "#70A49400", "EAS.FEB" = "#70A494", "EAS.MAY" = "#70A49400",
+                                   "CRO.OCT" = "#70A49400", "CRO.FEB" = "#70A494", "CRO.MAY" = "#70A49400", 
+                                   "HCN.OCT" = "#70A49400", "HCN.FEB" = "#70A494", "HCN.MAY" = "#70A49400",
+                                   "HUR.OCT" = "#EDBB8A00", "HUR.FEB" = "#EDBB8A", "HUR.MAY" = "#70A49400",
+                                   "FRY.OCT" = "#EDBB8A00", "FRY.FEB" = "#EDBB8A", "FRY.MAY" = "#EDBB8A00", 
+                                   "RUT.OCT" = "#EDBB8A00", "RUT.FEB" = "#EDBB8A", "RUT.MAY" = "#EDBB8A00",
+                                   "RIC.OCT" = "#CA562C00", "RIC.FEB" = "#CA562C", "RIC.MAY" = "#CA562C00",
+                                   "LLW.OCT" = "#CA562C00", "LLW.FEB" = "#CA562C", "LLW.MAY" = "#CA562C00", 
+                                   "LLC.OCT" = "#CA562C00", "LLC.FEB" = "#CA562C", "LLC.MAY" = "#CA562C00")) +
+  coord_equal() +
+  theme_bw() +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  scale_x_continuous(name = "NMDS1", limits = c(-.15, .15)) +
+  scale_y_continuous(name = "NMDS2", limits = c(-.15, .15)) 
+
+# Display the plot
+print(TOPPlot)
+
+
+
+
+
+# Create polygons around May sites
+
+# Filter some data first for the ellipses
+ref.may <- subset(TOPsites, site %in% c("EAS.MAY", "CRO.MAY", "HCN.MAY"))
+mid.may <- subset(TOPsites, site %in% c("HUR.MAY", "FRY.MAY", "RUT.MAY"))
+high.may <- subset(TOPsites, site %in% c("RIC.MAY","LLW.MAY", "LLC.MAY"))
+
+TOPsites_may <- TOPsites %>% 
+  filter(site %in% c("EAS.MAY", "CRO.MAY", "HCN.MAY", "HUR.MAY", "FRY.MAY", "RUT.MAY", "RIC.MAY", "LLW.MAY", "LLC.MAY"))
+
+install.packages("ggforce")
+library(ggforce)
+
+
+TOPPlot <- ggplot() +    
+  geom_mark_ellipse(data = ref.may, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#70A494", alpha = 0.3) +
+  geom_mark_ellipse(data = mid.may, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#EDBB8A", alpha = 0.3) +
+  geom_mark_ellipse(data = high.may, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#CA562C", alpha = 0.3) +
+  geom_text(data = TOPGenera, aes(x = NMDS1, y = NMDS2, label = species), alpha = 0.0, vjust = 0.5, color = "white") +   
+  geom_point(data = TOPsites_may, aes(x = NMDS1, y = NMDS2, color = site), size = 3) + 
+  geom_text(data = TOPsites_may, aes(x = NMDS1, y = NMDS2, label = site), size = 2, vjust = 0.5) +
+  scale_colour_manual(values = c(  "EAS.OCT" = "#70A49400", "EAS.FEB" = "#70A49400", "EAS.MAY" = "#70A494",
+                                   "CRO.OCT" = "#70A49400", "CRO.FEB" = "#70A49400", "CRO.MAY" = "#70A494", 
+                                   "HCN.OCT" = "#70A49400", "HCN.FEB" = "#70A49400", "HCN.MAY" = "#70A494",
+                                   "HUR.OCT" = "#EDBB8A00", "HUR.FEB" = "#EDBB8A00", "HUR.MAY" = "#EDBB8A",
+                                   "FRY.OCT" = "#EDBB8A00", "FRY.FEB" = "#EDBB8A00", "FRY.MAY" = "#EDBB8A", 
+                                   "RUT.OCT" = "#EDBB8A00", "RUT.FEB" = "#EDBB8A00", "RUT.MAY" = "#EDBB8A",
+                                   "RIC.OCT" = "#CA562C00", "RIC.FEB" = "#CA562C00", "RIC.MAY" = "#CA562C",
+                                   "LLW.OCT" = "#CA562C00", "LLW.FEB" = "#CA562C00", "LLW.MAY" = "#CA562C", 
+                                   "LLC.OCT" = "#CA562C00", "LLC.FEB" = "#CA562C00", "LLC.MAY" = "#CA562C")) +
+  coord_equal() +
+  theme_bw() +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  scale_x_continuous(name = "NMDS1", limits = c(-.15, .15)) +
+  scale_y_continuous(name = "NMDS2", limits = c(-.15, .15)) 
+
+
+
+
+
+# Isolate REF sites for each quarterly
+
+ref.oct <- subset(TOPsites, site %in% c("EAS.OCT", "CRO.OCT", "HCN.OCT"))
+ref.feb <- subset(TOPsites, site %in% c("EAS.FEB", "CRO.FEB", "HCN.FEB"))
+ref.may <- subset(TOPsites, site %in% c("EAS.MAY", "CRO.MAY", "HCN.MAY"))
+
+TOPsites_ref <- TOPsites %>% 
+  filter(site %in% c("EAS.OCT", "EAS.FEB", "EAS.MAY","CRO.OCT", "CRO.FEB", "CRO.MAY",
+                     "HCN.OCT", "HCN.FEB", "HCN.MAY"))
+
+REF.NMDS <- ggplot() +    
+  geom_mark_ellipse(data = ref.oct, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#70A494", alpha = 0.3) +
+  geom_mark_ellipse(data = ref.feb, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#EDBB8A", alpha = 0.3) +
+  geom_mark_ellipse(data = ref.may, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#CA562C", alpha = 0.3) +
+  geom_text(data = TOPGenera, aes(x = NMDS1, y = NMDS2, label = species), alpha = 0.0, vjust = 0.5, color = "white") +   
+  geom_point(data = TOPsites_ref, aes(x = NMDS1, y = NMDS2, color = site), size = 3) + 
+  geom_text(data = TOPsites_ref, aes(x = NMDS1, y = NMDS2, label = site), size = 2, vjust = 0.5) +
+  scale_colour_manual(values = c(  "EAS.OCT" = "#70A494", "EAS.FEB" = "#EDBB8A", "EAS.MAY" = "#CA562C",
+                                   "CRO.OCT" = "#70A494", "CRO.FEB" = "#EDBB8A", "CRO.MAY" = "#CA562C", 
+                                   "HCN.OCT" = "#70A494", "HCN.FEB" = "#EDBB8A", "HCN.MAY" = "#CA562C",
+                                   "HUR.OCT" = "#EDBB8A00", "HUR.FEB" = "#EDBB8A00", "HUR.MAY" = "#EDBB8A00",
+                                   "FRY.OCT" = "#EDBB8A00", "FRY.FEB" = "#EDBB8A00", "FRY.MAY" = "#EDBB8A00", 
+                                   "RUT.OCT" = "#EDBB8A00", "RUT.FEB" = "#EDBB8A00", "RUT.MAY" = "#EDBB8A00",
+                                   "RIC.OCT" = "#CA562C00", "RIC.FEB" = "#CA562C00", "RIC.MAY" = "#CA562C00",
+                                   "LLW.OCT" = "#CA562C00", "LLW.FEB" = "#CA562C00", "LLW.MAY" = "#CA562C00", 
+                                   "LLC.OCT" = "#CA562C00", "LLC.FEB" = "#CA562C00", "LLC.MAY" = "#CA562C00")) +
+  coord_equal() +
+  theme_bw() +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  scale_x_continuous(name = "NMDS1", limits = c(-.15, .15)) +
+  scale_y_continuous(name = "NMDS2", limits = c(-.15, .15)) 
+
+print(REF.NMDS)
+
+
+
+
+# Isolate MID sites for each quarterly
+
+mid.oct <- subset(TOPsites, site %in% c("HUR.OCT", "FRY.OCT", "RUT.OCT"))
+mid.feb <- subset(TOPsites, site %in% c("HUR.FEB", "FRY.FEB", "RUT.FEB"))
+mid.may <- subset(TOPsites, site %in% c("HUR.MAY", "FRY.MAY", "RUT.MAY"))
+
+TOPsites_mid <- TOPsites %>% 
+  filter(site %in% c("HUR.OCT", "FRY.OCT", "RUT.OCT","HUR.FEB", "FRY.FEB", "RUT.FEB","HUR.MAY", "FRY.MAY", "RUT.MAY"))
+
+MID.NMDS <- ggplot() +    
+  geom_mark_ellipse(data = mid.oct, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#70A494", alpha = 0.3) +
+  geom_mark_ellipse(data = mid.feb, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#EDBB8A", alpha = 0.3) +
+  geom_mark_ellipse(data = mid.may, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#CA562C", alpha = 0.3) +
+  geom_text(data = TOPGenera, aes(x = NMDS1, y = NMDS2, label = species), alpha = 0.0, vjust = 0.5, color = "white") +   
+  geom_point(data = TOPsites_mid, aes(x = NMDS1, y = NMDS2, color = site), size = 3) + 
+  geom_text(data = TOPsites_mid, aes(x = NMDS1, y = NMDS2, label = site), size = 2, vjust = 0.5) +
+  scale_colour_manual(values = c(  "EAS.OCT" = "#70A49400", "EAS.FEB" = "#70A49400", "EAS.MAY" = "#70A49400",
+                                   "CRO.OCT" = "#70A49400", "CRO.FEB" = "#70A49400", "CRO.MAY" = "#70A49400", 
+                                   "HCN.OCT" = "#70A49400", "HCN.FEB" = "#70A49400", "HCN.MAY" = "#70A49400",
+                                   "HUR.OCT" = "#70A494", "HUR.FEB" = "#EDBB8A", "HUR.MAY" = "#CA562C",
+                                   "FRY.OCT" = "#70A494", "FRY.FEB" = "#EDBB8A", "FRY.MAY" = "#CA562C", 
+                                   "RUT.OCT" = "#70A494", "RUT.FEB" = "#EDBB8A", "RUT.MAY" = "#CA562C",
+                                   "RIC.OCT" = "#CA562C00", "RIC.FEB" = "#CA562C00", "RIC.MAY" = "#CA562C00",
+                                   "LLW.OCT" = "#CA562C00", "LLW.FEB" = "#CA562C00", "LLW.MAY" = "#CA562C00", 
+                                   "LLC.OCT" = "#CA562C00", "LLC.FEB" = "#CA562C00", "LLC.MAY" = "#CA562C00")) +
+  coord_equal() +
+  theme_bw() +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  scale_x_continuous(name = "NMDS1", limits = c(-.15, .15)) +
+  scale_y_continuous(name = "NMDS2", limits = c(-.15, .15)) 
+
+print(MID.NMDS)
+
+
+# Isolate HIGH sites for each quarterly
+
+high.oct <- subset(TOPsites, site %in% c("RIC.OCT", "LLW.OCT", "LLC.OCT"))
+high.feb <- subset(TOPsites, site %in% c("RIC.FEB", "LLW.FEB", "LLW.FEB"))
+high.may <- subset(TOPsites, site %in% c("RIC.MAY", "LLW.MAY", "LLC.MAY"))
+
+TOPsites_high <- TOPsites %>% 
+  filter(site %in% c("RIC.OCT", "LLW.OCT", "LLC.OCT", "RIC.FEB", "LLW.FEB", "LLW.FEB", "RIC.MAY", "LLW.MAY", "LLC.MAY"))
+
+MID.NMDS <- ggplot() +    
+  geom_mark_ellipse(data = high.oct, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#70A494", alpha = 0.3) +
+  geom_mark_ellipse(data = high.feb, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#EDBB8A", alpha = 0.3) +
+  geom_mark_ellipse(data = high.may, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#CA562C", alpha = 0.3) +
+  geom_text(data = TOPGenera, aes(x = NMDS1, y = NMDS2, label = species), alpha = 0.0, vjust = 0.5, color = "white") +   
+  geom_point(data = TOPsites_high, aes(x = NMDS1, y = NMDS2, color = site), size = 3) + 
+  geom_text(data = TOPsites_high, aes(x = NMDS1, y = NMDS2, label = site), size = 2, vjust = 0.5) +
+  scale_colour_manual(values = c(  "EAS.OCT" = "#70A49400", "EAS.FEB" = "#70A49400", "EAS.MAY" = "#70A49400",
+                                   "CRO.OCT" = "#70A49400", "CRO.FEB" = "#70A49400", "CRO.MAY" = "#70A49400", 
+                                   "HCN.OCT" = "#70A49400", "HCN.FEB" = "#70A49400", "HCN.MAY" = "#70A49400",
+                                   "HUR.OCT" = "#EDBB8A00", "HUR.FEB" = "#EDBB8A00", "HUR.MAY" = "#EDBB8A00",
+                                   "FRY.OCT" = "#EDBB8A00", "FRY.FEB" = "#EDBB8A00", "FRY.MAY" = "#EDBB8A00", 
+                                   "RUT.OCT" = "#EDBB8A00", "RUT.FEB" = "#EDBB8A00", "RUT.MAY" = "#EDBB8A00",
+                                   "RIC.OCT" = "#70A494", "RIC.FEB" = "#EDBB8A", "RIC.MAY" = "#CA562C",
+                                   "LLW.OCT" = "#70A494", "LLW.FEB" = "#EDBB8A", "LLW.MAY" = "#CA562C", 
+                                   "LLC.OCT" = "#70A494", "LLC.FEB" = "#EDBB8A", "LLC.MAY" = "#CA562C")) +
+  coord_equal() +
+  theme_bw() +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  scale_x_continuous(name = "NMDS1", limits = c(-.15, .15)) +
+  scale_y_continuous(name = "NMDS2", limits = c(-.15, .15)) 
+
+print(MID.NMDS)
+
+
+# extra code
+("CRO" = "#70A494", "EAS" = "#70A494", "HCN" = "#70A494",
+  "HUR" = "#EDBB8A", "FRY" = "#EDBB8A", "RUT" = "#EDBB8A", 
+  "RIC" = "#CA562C", "LLC" = "#CA562C", "LLW" = "#CA562C")) +
+  coord_equal() +
+
+  "EAS.OCT" = "#70A494", "EAS.FEB" = "#70A494", "EAS.MAY" = "#70A494",
+  "CRO.OCT" = "#70A494", "CRO.FEB" = "#70A494", "CRO.MAY" = "#70A494", 
+  "HCN.OCT" = "#70A494", "HCN.FEB" = "#70A494", "HCN.MAY" = "#70A494",
+  "HUR.OCT" = "#EDBB8A", "HUR.FEB" = "#EDBB8A", "HUR.MAY" = "#EDBB8A",
+  "FRY.OCT" = "#EDBB8A", "FRY.FEB" = "#EDBB8A", "FRY.MAY" = "#EDBB8A", 
+  "RUT.OCT" = "#EDBB8A", "RUT.FEB" = "#EDBB8A", "RUT.MAY" = "#EDBB8A",
+  "RIC.OCT" = "#CA562C", "RIC.FEB" = "#CA562C", "RIC.MAY" = "#CA562C",
+  "LLW.OCT" = "#CA562C", "LLW.FEB" = "#CA562C", "LLW.MAY" = "#CA562C", 
+  "LLC.OCT" = "#CA562C", "LLC.FEB" = "#CA562C", "LLC.MAY" = "#CA562C")) +
+
+
+
+# STATS----------------
+
+#Let's look at effects
+pr <- function(m) printCoefmat(coef(summary(m)),
+                               digits=3,signif.stars=FALSE) 
+
+#Get the estimates per group, rather than the differences
+pr(lm1 <- lm(mean.biomass~SC.Category,data=meansites))
+
+pr(lm2 <- lm(mean.biomass~SC.Level,data=meansites))
+
+pr(lm3<- lm(mean.biomass~FFG, data=meansites))
+
+
+anova(lm1,lm2,lm3)
+
+library(effects)
+
+summary(allEffects(lm1))
+
+summary(allEffects(lm2))
+
+summary(allEffects(lm3))
+
+
+#plot the effects 
+plot(allEffects(lm1)) #High has highest biomass of the sites, RIC probably pulling it a bit
+
+plot(allEffects(lm2))
+
+plot(allEffects(lm3))
+
+
+#Playing around with glm
+library(DHARMa)
+news(package='DHARMa')
 
 
 

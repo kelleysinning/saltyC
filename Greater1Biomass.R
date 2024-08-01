@@ -909,6 +909,12 @@ meansites$SC.Level <- factor(meansites$SC.Level, levels = c("25","72","78","387"
 meansites$FFG <- factor(meansites$FFG, levels = c("Scraper","Shredder","Predator","Collector-Gatherer","Collector-Filterer"))
 meansites$Sample.Month <- factor(meansites$Sample.Month, levels = c("September","October","November","December","January", "February", "March", "April", "May", "June", "July"))
 
+meansites.quarterly$Site <- factor(meansites.quarterly$Site, levels = c("EAS", "CRO","HCN","FRY","HUR","RUT","LLC","LLW","RIC"))
+meansites.quarterly$SC.Category <- factor(meansites.quarterly$SC.Category, levels = c("REF","MID","HIGH"))
+meansites.quarterly$SC.Level <- factor(meansites.quarterly$SC.Level, levels = c("25","72","78","387","402","594","1119","1242","1457"))
+meansites.quarterly$FFG <- factor(meansites.quarterly$FFG, levels = c("Scraper","Shredder","Predator","Collector-Gatherer","Collector-Filterer"))
+meansites.quarterly$Sample.Month <- factor(meansites.quarterly$Sample.Month, levels = c("September","October","November","December","January", "February", "March", "April", "May", "June", "July"))
+
 biomassmeantable$Site <- factor(biomassmeantable$Site, levels = c("EAS", "CRO","HCN","FRY","HUR","RUT","LLC","LLW","RIC"))
 biomassmeantable$SC.Category <- factor(biomassmeantable$SC.Category, levels = c("REF","MID","HIGH"))
 biomassmeantable$SC.Level <- factor(biomassmeantable$SC.Level, levels = c("25","72","78","387","402","594","1119","1242","1457"))
@@ -953,6 +959,23 @@ FFGgplot1 <- ggplot(data = meansites, aes(x = SC.Level, y = log(mean.biomass))) 
     axis.text.x = element_text(angle = 90, hjust = 1, face = "italic"))
 
 FFGgplot1  # subtle downward scraper trend
+
+FFGgplot1.5 <- ggplot(data = meansites.quarterly, aes(x = SC.Level, y = log(mean.biomass))) +
+  facet_wrap(~FFG, ncol = 5, nrow = 5) +  # This creates multiple "panels" for site
+  geom_boxplot(aes(fill = FFG)) +  # Use fill aesthetic for boxplot
+  geom_point() +
+  ylab("log(Biomass (g/m2))") +
+  xlab("") +
+  scale_fill_manual(values = ffg_colors, name = "FFG") +  # Specify colors for FFGs
+  theme_bw() +
+  theme(
+    axis.title = element_text(size = 23),
+    axis.text = element_text(size = 15),
+    panel.grid = element_blank(), 
+    axis.line = element_line(),
+    axis.text.x = element_text(angle = 90, hjust = 1, face = "italic"))
+
+FFGgplot1.5   # subtle downward scraper trend
 
 #  Let's make panels based on SC category
 FFGgplot2 <- ggplot(data = meansites, aes(x = FFG, y = (log(mean.biomass)))) +
@@ -1004,6 +1027,27 @@ print(FFGgplot3) # A hump in scrapers and collector-gatherers in spring,
 # collector-filterers and predators remain fairly consistent across time,
 # shredders increasing throughout the year. Of course this figure doesn't show the SC
 
+FFGgplot3.5 <- ggplot(data = meansites.quarterly, aes(x = Sample.Month, y = (log(mean.biomass)))) +
+  facet_wrap(~FFG, ncol = 5, nrow = 5) +  
+  geom_boxplot(fill = "white") +  
+  geom_point(aes(color = FFG), size = 2) +  
+  ylab(expression(log(Biomass(g/m^2)))) +  
+  xlab("") +
+  scale_color_manual(values = ffg_colors, name = "FFG") +  
+  theme_bw() +
+  theme(
+    axis.title = element_text(size = 23),
+    axis.text = element_text(size = 15),
+    panel.grid = element_blank(),
+    axis.line = element_line(),
+    axis.text.x = element_text(angle = 90, hjust = 1, face = "italic"),
+    legend.position = "top",
+    legend.title = element_blank(),
+    legend.text = element_text(size = 20),
+    legend.background = element_blank(),
+    legend.key = element_rect(fill = "white", color = "white")
+  )
+print(FFGgplot3.5)
 
 # Months as panels, FFGs on x, another way of sharing previous graph
 FFGgplot4 <- ggplot(data = meansites, aes(x = FFG, y = (log(mean.biomass)))) +
@@ -1078,7 +1122,27 @@ FFGgplot6<- ggplot(data = meansites, aes(x = Sample.Month, y = log(mean.biomass)
 
 print(FFGgplot6) # This is actually not toooo hard to follow
 
+FFGgplot6.5<- ggplot(data = meansites.quarterly, aes(x = Sample.Month, y = log(mean.biomass), fill = SC.Category)) +
+  geom_bar(stat = "identity", position = "dodge") +  # Bar graph with dodge position
+  ylab(expression(log(Biomass~(g/m^2)))) +  # Y-axis label
+  xlab("Sample Month") +
+  scale_fill_manual(values = my_colors, name = "SC.Level") +  # Assign specific colors to FFG
+  theme_bw() +
+  theme(
+    axis.title = element_text(size = 23),
+    axis.text = element_text(size = 15),
+    panel.grid = element_blank(),
+    axis.line = element_line(),
+    axis.text.x = element_text(angle = 90, hjust = 1, face = "italic"),
+    legend.position = "top",
+    legend.title = element_blank(),
+    legend.text = element_text(size = 20),
+    legend.background = element_blank(),
+    legend.key = element_rect(fill = "white", color = "white")
+  ) +
+  facet_wrap(~ FFG, ncol = 2)  # Facet by SC.Level with 2 columns
 
+print(FFGgplot6.5) # This is actually not toooo hard to follow
 
 # Same thing but months are colored this time, can actually see patterns along the SC gradient
 my_colors = carto_pal(11, "Geyser") 
@@ -1127,11 +1191,39 @@ bioboxplot=ggplot(data=meansites,aes(x=SC.Level,y=(log(mean.biomass))))+
 
 bioboxplot # Log to see better
 
+bioboxplotquarterly=ggplot(data=meansites.quarterly,aes(x=SC.Level,y=(log(mean.biomass))))+ 
+  geom_boxplot()+
+  geom_point(aes(color=SC.Category),size=2)+
+  ylab(expression(Biomass(g/m^2)))+
+  xlab("")+
+  scale_colour_manual(values = c("REF" = "#70A494", "MID" = "#DE8A5A", "HIGH" = "#CA562C")) +
+  theme_bw()+
+  theme(axis.title=element_text(size=23),
+        axis.text=element_text(size=15),
+        panel.grid = element_blank(), 
+        axis.line=element_line(),
+        axis.text.x = element_text(angle = 90, hjust = 1,face="italic"),
+        legend.position="top",
+        legend.title = element_blank(),
+        legend.text = element_text(size=20),
+        legend.background = element_blank(),
+        legend.key=element_rect(fill="white",color="white"))
+
+
+bioboxplotquarterly # Log to see better
+
 #PROPORTIONS PARTY!------------------------------------
 
 meansites$SC.Category <- factor(meansites$SC.Category, levels = c("REF","MID","HIGH"))
-meansites$FFG <- factor(meansites$FFG, levels = c("Scraper","Shredder","Predator","Collector-Gatherer","Collector-Filterer"))
 meansites$SC.Level <- factor(meansites$SC.Level, levels = c("25","72","78","387","402","594","1119","1242","1457"))
+meansites$FFG <- factor(meansites$FFG, levels = c("Scraper","Shredder","Predator","Collector-Gatherer","Collector-Filterer"))
+meansites$Sample.Month <- factor(meansites$Sample.Month, levels = c("September","October","November","December","January", "February", "March", "April", "May", "June", "July"))
+
+meansites.quarterly$Site <- factor(meansites.quarterly$Site, levels = c("EAS", "CRO","HCN","FRY","HUR","RUT","LLC","LLW","RIC"))
+meansites.quarterly$SC.Category <- factor(meansites.quarterly$SC.Category, levels = c("REF","MID","HIGH"))
+meansites.quarterly$SC.Level <- factor(meansites.quarterly$SC.Level, levels = c("25","72","78","387","402","594","1119","1242","1457"))
+meansites.quarterly$FFG <- factor(meansites.quarterly$FFG, levels = c("Scraper","Shredder","Predator","Collector-Gatherer","Collector-Filterer"))
+meansites.quarterly$Sample.Month <- factor(meansites.quarterly$Sample.Month, levels = c("September","October","November","December","January", "February", "March", "April", "May", "June", "July"))
 
 install.packages("rcartocolor")# Colorblind color schemes
 library(rcartocolor)
@@ -1177,6 +1269,32 @@ propgg_cat # oh my, shredders are poppign off
 
 
 
+
+# Now with quarterly
+total_biomass_cat_quarterly <- meansites.quarterly %>%
+  group_by(SC.Category) %>%
+  summarise(total_biomass = sum(mean.biomass)) # summing the mean biomass for each sc cat
+
+# Calculate proportions of total biomass for each FFG for each site
+df_proportions_cat_quarterly <- meansites.quarterly %>%
+  left_join(total_biomass_cat_quarterly, by = "SC.Category") %>%
+  group_by(SC.Category, FFG, SYNC) %>%
+  summarise(Proportion = sum(mean.biomass) / first(total_biomass)) # Summing mean biomass
+#for each FFG for each SC category and dividing it by summed mean biomass for each sc cat
+
+
+# Plot with specific colors assigned to each FFG using hexadecimal codes
+propgg_cat_quarterly = ggplot(df_proportions_cat_quarterly, aes(x = SC.Category, y = Proportion, fill = FFG)) +
+  geom_bar(stat = "identity") +
+  labs(x = "Specific Conductivity Category", y = "Proportion of Total Biomass", fill = "FFGs") +
+  scale_fill_manual(values = ffg_colors, name = "FFG") +  # Assign specific colors
+  theme_minimal()
+
+propgg_cat_quarterly # oh my, shredders are poppign off
+
+
+
+
 # Now let's do it for SC level, calculate total biomass for each SC Level
 total_biomass_sites <- meansites %>%
   group_by(SC.Level) %>%
@@ -1211,22 +1329,22 @@ propgg_site# Can really see the scraper decline and shredder increas across the
 
 
 
-# Quarterly sites only
+# Now, quarterly sites only
 
 # Now let's do it for SC level, calculate total biomass for each SC Level
-total_biomass_sites <- meansites.quarterly %>%
+total_biomass_sites_quarterly <- meansites.quarterly %>%
   group_by(SC.Level) %>%
   summarise(total_biomass = sum(mean.biomass)) # Summing the mean biomass for each sc level,
 #replicates have already been averaged
 
 # Calculate proportions of total biomass for each FFG for each site
-df_proportions_sites <- meansites.quarterly %>%
-  left_join(total_biomass_sites, by = "SC.Level") %>%
+df_proportions_sites_quarterly <- meansites.quarterly %>%
+  left_join(total_biomass_sites_quarterly, by = "SC.Level") %>%
   group_by(SC.Level, FFG, SYNC) %>%
   summarise(Proportion = sum(mean.biomass) / first(total_biomass)) # Summing mean biomass
 #for each FFG for each SC category and dividing it by summed mean biomass for each sc cat
 
-propgg_site <- ggplot(df_proportions_sites, aes(x = SC.Level, y = Proportion, fill = FFG)) +
+propgg_site_quarterly <- ggplot(df_proportions_sites_quarterly, aes(x = SC.Level, y = Proportion, fill = FFG)) +
   geom_bar(stat = "identity", position = "stack") +
   labs(x = "SC Level", y = "Proportion of Total Biomass", fill = "Functional Group") +
   scale_fill_manual(values = ffg_colors, name = "FFG") +  # Assign specific colors
@@ -1242,13 +1360,13 @@ propgg_site <- ggplot(df_proportions_sites, aes(x = SC.Level, y = Proportion, fi
         legend.background = element_blank(),
         legend.key = element_rect(fill = "white", color = "white"))
 
-propgg_site# Can really see the scraper decline and shredder increas across the 
+propgg_site_quarterly# Can really see the scraper decline and shredder increas across the 
 # gradient in this one
 
 
 
 
-# COMBINED TRAITS WHOO
+# COMBINED TRAITS WHOO--------------------------------
 
 # Filter the data to include only relevant groups
 combo_proportions <- meansites %>%
@@ -1310,6 +1428,139 @@ ggplot(df_merged, aes(x = Sample.Month, y = Proportion, color = interaction(FFG,
         legend.text = element_text(size = 13),
         legend.background = element_blank(),
         legend.key = element_rect(fill = "white", color = "white"))
+
+
+
+
+
+
+# Same but with quarterly data 
+
+# Filter the data to include only relevant groups
+combo_proportions_quarterly <- meansites.quarterly %>%
+  filter((FFG == "Scraper" & SYNC == "Synchronous") |
+           (FFG == "Shredder" & SYNC == "Asynchronous"))
+
+# Calculate total biomass at each time point
+total_biomass_quarterly <- combo_proportions_quarterly %>%
+  group_by(Sample.Month) %>%
+  summarise(TotalBiomass = sum(mean.biomass))
+
+# Calculate the biomass contributions of each group
+group_biomass_quarterly <- combo_proportions_quarterly %>%
+  group_by(Sample.Month, FFG, SYNC) %>%
+  summarise(GroupBiomass = sum(mean.biomass))
+
+# Merge total biomass with group biomass
+df_merged_quarterly <- merge(group_biomass_quarterly, total_biomass_quarterly, by = "Sample.Month")
+
+# Calculate the proportion of biomass for each group
+df_merged_quarterly <- df_merged_quarterly %>%
+  mutate(Proportion = GroupBiomass / TotalBiomass)
+
+# Graph proportions
+ggplot(df_merged_quarterly, aes(x = Sample.Month, y = Proportion, fill = interaction(FFG, SYNC))) +
+  geom_bar(stat = "identity", position = "stack") +
+  labs(x = "SC Category",
+       y = "Proportion of Biomass",
+       color = "Group") +
+  scale_y_continuous(labels = scales::percent) +
+  theme_bw()+
+  theme(axis.title=element_text(size=15),
+        axis.text=element_text(size=15),
+        panel.grid = element_blank(), 
+        axis.line=element_line(),
+        axis.text.x = element_text(angle = 90, hjust = 1,face="italic"),
+        legend.position="right",
+        legend.title = element_blank(),
+        legend.text = element_text(size=13),
+        legend.background = element_blank(),
+        legend.key=element_rect(fill="white",color="white")) #WOAH
+
+# Making it continuous
+ggplot(df_merged_quarterly, aes(x = Sample.Month, y = Proportion, color = interaction(FFG, SYNC), group = interaction(FFG, SYNC))) +
+  geom_line(size = 1.2) +
+  geom_point(size = 3) +  
+  labs(x = "SC Category",
+       y = "Percent Biomass",
+       color = "Group") +
+  scale_y_continuous(labels = scales::percent) +
+  theme_bw() +
+  theme(axis.title = element_text(size = 15),
+        axis.text = element_text(size = 15),
+        panel.grid = element_blank(), 
+        axis.line = element_line(),
+        axis.text.x = element_text(angle = 90, hjust = 1, face = "italic"),
+        legend.position = "right",
+        legend.title = element_blank(),
+        legend.text = element_text(size = 13),
+        legend.background = element_blank(),
+        legend.key = element_rect(fill = "white", color = "white"))
+
+
+
+# Different quarterly trait combos
+combo_proportions_quarterly <- meansites.quarterly %>%
+  filter((FFG == "Scraper" & SYNC == "Asynchronous") |
+           (FFG == "Shredder" & SYNC == "Synchronous"))
+
+# Calculate total biomass at each time point
+total_biomass_quarterly <- combo_proportions_quarterly %>%
+  group_by(Sample.Month) %>%
+  summarise(TotalBiomass = sum(mean.biomass))
+
+# Calculate the biomass contributions of each group
+group_biomass_quarterly <- combo_proportions_quarterly %>%
+  group_by(Sample.Month, FFG, SYNC) %>%
+  summarise(GroupBiomass = sum(mean.biomass))
+
+# Merge total biomass with group biomass
+df_merged_quarterly <- merge(group_biomass_quarterly, total_biomass_quarterly, by = "Sample.Month")
+
+# Calculate the proportion of biomass for each group
+df_merged_quarterly <- df_merged_quarterly %>%
+  mutate(Proportion = GroupBiomass / TotalBiomass)
+
+# Graph proportions
+ggplot(df_merged_quarterly, aes(x = Sample.Month, y = Proportion, fill = interaction(FFG, SYNC))) +
+  geom_bar(stat = "identity", position = "stack") +
+  labs(x = "SC Category",
+       y = "Proportion of Biomass",
+       color = "Group") +
+  scale_y_continuous(labels = scales::percent) +
+  theme_bw()+
+  theme(axis.title=element_text(size=15),
+        axis.text=element_text(size=15),
+        panel.grid = element_blank(), 
+        axis.line=element_line(),
+        axis.text.x = element_text(angle = 90, hjust = 1,face="italic"),
+        legend.position="right",
+        legend.title = element_blank(),
+        legend.text = element_text(size=13),
+        legend.background = element_blank(),
+        legend.key=element_rect(fill="white",color="white")) #WOAH
+
+# Making it continuous
+ggplot(df_merged_quarterly, aes(x = Sample.Month, y = Proportion, color = interaction(FFG, SYNC), group = interaction(FFG, SYNC))) +
+  geom_line(size = 1.2) +
+  geom_point(size = 3) +  
+  labs(x = "SC Category",
+       y = "Percent Biomass",
+       color = "Group") +
+  scale_y_continuous(labels = scales::percent) +
+  theme_bw() +
+  theme(axis.title = element_text(size = 15),
+        axis.text = element_text(size = 15),
+        panel.grid = element_blank(), 
+        axis.line = element_line(),
+        axis.text.x = element_text(angle = 90, hjust = 1, face = "italic"),
+        legend.position = "right",
+        legend.title = element_blank(),
+        legend.text = element_text(size = 13),
+        legend.background = element_blank(),
+        legend.key = element_rect(fill = "white", color = "white"))
+
+
 
 
 
@@ -1378,101 +1629,30 @@ ggplot(df_merged, aes(x = SC.Level, y = Proportion, color = interaction(FFG, SYN
 # Shredders/Acynchronous are defintiely having a subsidy
 
 
-
-
-
-
-
-# Now, with meansites.quarterly
-
-# Filter the data to include only relevant groups
-combo_proportions <- meansites.quarterly %>%
+# SAame thing but with quarterly
+combo_proportions_quarterly <- meansites.quarterly %>%
   filter((FFG == "Scraper" & SYNC == "Synchronous") |
            (FFG == "Shredder" & SYNC == "Asynchronous"))
 
 # Calculate total biomass at each time point
-total_biomass <- combo_proportions %>%
-  group_by(Sample.Month) %>%
-  summarise(TotalBiomass = sum(mean.biomass))
-
-# Calculate the biomass contributions of each group
-group_biomass <- combo_proportions %>%
-  group_by(Sample.Month, FFG, SYNC) %>%
-  summarise(GroupBiomass = sum(mean.biomass))
-
-# Merge total biomass with group biomass
-df_merged <- merge(group_biomass, total_biomass, by = "Sample.Month")
-
-# Calculate the proportion of biomass for each group
-df_merged <- df_merged %>%
-  mutate(Proportion = GroupBiomass / TotalBiomass)
-
-# Graph proportions
-ggplot(df_merged, aes(x = Sample.Month, y = Proportion, fill = interaction(FFG, SYNC))) +
-  geom_bar(stat = "identity", position = "stack") +
-  labs(x = "SC Category",
-       y = "Proportion of Biomass",
-       color = "Group") +
-  scale_y_continuous(labels = scales::percent) +
-  theme_bw()+
-  theme(axis.title=element_text(size=15),
-        axis.text=element_text(size=15),
-        panel.grid = element_blank(), 
-        axis.line=element_line(),
-        axis.text.x = element_text(angle = 90, hjust = 1,face="italic"),
-        legend.position="right",
-        legend.title = element_blank(),
-        legend.text = element_text(size=13),
-        legend.background = element_blank(),
-        legend.key=element_rect(fill="white",color="white")) #WOAH
-
-# Making it continuous
-ggplot(df_merged, aes(x = Sample.Month, y = Proportion, color = interaction(FFG, SYNC), group = interaction(FFG, SYNC))) +
-  geom_line(size = 1.2) +
-  geom_point(size = 3) +  
-  labs(x = "SC Category",
-       y = "Proportion of Biomass",
-       color = "Group") +
-  scale_y_continuous(labels = scales::percent) +
-  theme_bw() +
-  theme(axis.title = element_text(size = 15),
-        axis.text = element_text(size = 15),
-        panel.grid = element_blank(), 
-        axis.line = element_line(),
-        axis.text.x = element_text(angle = 90, hjust = 1, face = "italic"),
-        legend.position = "right",
-        legend.title = element_blank(),
-        legend.text = element_text(size = 13),
-        legend.background = element_blank(),
-        legend.key = element_rect(fill = "white", color = "white"))
-
-
-
-# Across SC level
-# Filter the data to include only relevant groups
-combo_proportions <- meansites.quarterly %>%
-  filter((FFG == "Scraper" & SYNC == "Synchronous") |
-           (FFG == "Shredder" & SYNC == "Asynchronous"))
-
-# Calculate total biomass at each time point
-total_biomass <- combo_proportions %>%
+total_biomass_quarterly <- combo_proportions_quarterly %>%
   group_by(SC.Level) %>%
   summarise(TotalBiomass = sum(mean.biomass))
 
 # Calculate the biomass contributions of each group
-group_biomass <- combo_proportions %>%
+group_biomass_quarterly <- combo_proportions_quarterly%>%
   group_by(SC.Level, FFG, SYNC) %>%
   summarise(GroupBiomass = sum(mean.biomass))
 
 # Merge total biomass with group biomass
-df_merged <- merge(group_biomass, total_biomass, by = "SC.Level")
+df_merged_quarterly <- merge(group_biomass_quarterly, total_biomass_quarterly, by = "SC.Level")
 
 # Calculate the proportion of biomass for each group
-df_merged <- df_merged %>%
+df_merged_quarterly <- df_merged_quarterly %>%
   mutate(Proportion = GroupBiomass / TotalBiomass)
 
 # Graph proportions
-ggplot(df_merged, aes(x = SC.Level, y = Proportion, fill = interaction(FFG, SYNC))) +
+ggplot(df_merged_quarterly, aes(x = SC.Level, y = Proportion, fill = interaction(FFG, SYNC))) +
   geom_bar(stat = "identity", position = "stack") +
   labs(x = "SC Category",
        y = "Proportion of Biomass",
@@ -1491,7 +1671,7 @@ ggplot(df_merged, aes(x = SC.Level, y = Proportion, fill = interaction(FFG, SYNC
         legend.key=element_rect(fill="white",color="white")) #WOAH
 
 # Continuous
-ggplot(df_merged, aes(x = SC.Level, y = Proportion, color = interaction(FFG, SYNC), group = interaction(FFG, SYNC))) +
+ggplot(df_merged_quarterly, aes(x = SC.Level, y = Proportion, color = interaction(FFG, SYNC), group = interaction(FFG, SYNC))) +
   geom_line(size = 1.2) +
   geom_point(size = 3) +  
   labs(x = "SC Category",
@@ -1509,7 +1689,74 @@ ggplot(df_merged, aes(x = SC.Level, y = Proportion, color = interaction(FFG, SYN
         legend.text = element_text(size = 13),
         legend.background = element_blank(),
         legend.key = element_rect(fill = "white", color = "white"))
-# Shredders/Acynchronous are defintiely having a subsidy
+
+
+
+
+
+# More quarterly only and different trait combos, this is awesome
+combo_proportions_quarterly <- meansites.quarterly %>%
+  filter((FFG == "Scraper" & SYNC == "Asynchronous") |
+           (FFG == "Shredder" & SYNC == "Synchronous"))
+
+# Calculate total biomass at each time point
+total_biomass_quarterly <- combo_proportions_quarterly %>%
+  group_by(SC.Level) %>%
+  summarise(TotalBiomass = sum(mean.biomass))
+
+# Calculate the biomass contributions of each group
+group_biomass_quarterly <- combo_proportions_quarterly%>%
+  group_by(SC.Level, FFG, SYNC) %>%
+  summarise(GroupBiomass = sum(mean.biomass))
+
+# Merge total biomass with group biomass
+df_merged_quarterly <- merge(group_biomass_quarterly, total_biomass_quarterly, by = "SC.Level")
+
+# Calculate the proportion of biomass for each group
+df_merged_quarterly <- df_merged_quarterly %>%
+  mutate(Proportion = GroupBiomass / TotalBiomass)
+
+# Graph proportions
+ggplot(df_merged_quarterly, aes(x = SC.Level, y = Proportion, fill = interaction(FFG, SYNC))) +
+  geom_bar(stat = "identity", position = "stack") +
+  labs(x = "SC Category",
+       y = "Proportion of Biomass",
+       color = "Group") +
+  scale_y_continuous(labels = scales::percent) +
+  theme_bw()+
+  theme(axis.title=element_text(size=15),
+        axis.text=element_text(size=15),
+        panel.grid = element_blank(), 
+        axis.line=element_line(),
+        axis.text.x = element_text(angle = 90, hjust = 1,face="italic"),
+        legend.position="right",
+        legend.title = element_blank(),
+        legend.text = element_text(size=13),
+        legend.background = element_blank(),
+        legend.key=element_rect(fill="white",color="white")) #WOAH
+
+# Continuous
+ggplot(df_merged_quarterly, aes(x = SC.Level, y = Proportion, color = interaction(FFG, SYNC), group = interaction(FFG, SYNC))) +
+  geom_line(size = 1.2) +
+  geom_point(size = 3) +  
+  labs(x = "SC Category",
+       y = "Percent Biomass",
+       color = "Group") +
+  scale_y_continuous(labels = scales::percent) +
+  theme_bw() +
+  theme(axis.title = element_text(size = 15),
+        axis.text = element_text(size = 15),
+        panel.grid = element_blank(), 
+        axis.line = element_line(),
+        axis.text.x = element_text(angle = 90, hjust = 1, face = "italic"),
+        legend.position = "right",
+        legend.title = element_blank(),
+        legend.text = element_text(size = 13),
+        legend.background = element_blank(),
+        legend.key = element_rect(fill = "white", color = "white"))
+
+
+
 
 
 # Want to see continuous decline of scrapers in comparison to shredders
@@ -1543,7 +1790,7 @@ propgg_site_scatter <- ggplot(filtered_data_ffg, aes(x = SC.Level, y = Proportio
 propgg_site_scatter
 
 
-# Want to see continuous decline of synchronoys in comparison to async
+# Want to see continuous decline of synchronous in comparison to async
 filtered_data_sync <- df_proportions_sites %>%
   filter(SYNC %in% c("Synchronous", "Asynchronous"))
 
@@ -1573,11 +1820,82 @@ propgg_site_scatter <- ggplot(filtered_data_sync, aes(x = SC.Level, y = Proporti
 
 propgg_site_scatter
 
-# Let's try % biomass-----------------------------------
+
+
+
+
+# Again with quarterly
+
+# Want to see continuous decline of scrapers in comparison to shredders
+filtered_data_ffg_quarterly <- df_proportions_sites_quarterly %>%
+  filter(FFG %in% c("Scraper", "Shredder"))
+
+# Plot the filtered data
+filtered_data_ffg_quarterly$SC.Level <- as.numeric(as.character(filtered_data_ffg_quarterly$SC.Level))
+
+propgg_site_scatter <- ggplot(filtered_data_ffg_quarterly, aes(x = SC.Level, y = Proportion, color = FFG)) +
+  geom_point( size = 3) +  # Set alpha to control transparency
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(x = "Specific Conductivity", y = "Proportion of Total Biomass", color = "Functional Group") +
+  scale_color_manual(values = c("Scraper" = "#008080", "Shredder" = "#CA562C")) +  
+  theme_bw() +
+  theme(
+    axis.title = element_text(size = 15),
+    axis.text = element_text(size = 15),
+    panel.grid = element_blank(),
+    axis.line = element_line(),
+    axis.text.x = element_text(angle = 90, hjust = 1, face = "italic"),
+    legend.position = "right",
+    legend.title = element_blank(),
+    legend.text = element_text(size = 13),
+    legend.background = element_blank(),
+    legend.key = element_rect(fill = "white", color = "white")
+  ) +
+  scale_x_continuous(expand = c(0.05, 0.05)) +  # Adjust the expand parameter to add extra space
+  coord_cartesian(ylim = c(0, max(filtered_data_ffg_quarterly$Proportion) * 1.1))  # Adjust y-axis limits
+
+propgg_site_scatter
+
+
+# Want to see continuous decline of synchronous in comparison to async
+filtered_data_sync_quarterly <- df_proportions_sites_quarterly %>%
+  filter(SYNC %in% c("Synchronous", "Asynchronous"))
+
+# Plot the filtered data
+filtered_data_sync_quarterly$SC.Level <- as.numeric(as.character(filtered_data_sync_quarterly$SC.Level))
+
+propgg_site_scatter <- ggplot(filtered_data_sync_quarterly, aes(x = SC.Level, y = Proportion, color = SYNC)) +
+  geom_point( size = 3) +  # Set alpha to control transparency
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(x = "Specific Conductivity", y = "Proportion of Total Biomass", color = "SYNC") +
+  scale_color_manual(values = c("Synchronous" = "#008080", "Asynchronous" = "#CA562C")) +  
+  theme_bw() +
+  theme(
+    axis.title = element_text(size = 15),
+    axis.text = element_text(size = 15),
+    panel.grid = element_blank(),
+    axis.line = element_line(),
+    axis.text.x = element_text(angle = 90, hjust = 1, face = "italic"),
+    legend.position = "right",
+    legend.title = element_blank(),
+    legend.text = element_text(size = 13),
+    legend.background = element_blank(),
+    legend.key = element_rect(fill = "white", color = "white")
+  ) +
+  scale_x_continuous(expand = c(0.05, 0.05)) +  # Adjust the expand parameter to add extra space
+  coord_cartesian(ylim = c(0, max(filtered_data_sync_quarterly$Proportion) * 1.1))  # Adjust y-axis limits
+
+propgg_site_scatter
+
+
+
+# PERCENT PARTY -----------------------------------
 
 meansites$SC.Category <- factor(meansites$SC.Category, levels = c("REF","MID","HIGH"))
 meansites$FFG <- factor(meansites$FFG, levels = c("Scraper","Shredder","Predator","Collector-Gatherer","Collector-Filterer"))
 meansites$SC.Level <- factor(meansites$SC.Level, levels = c("25","72","78","387","402","594","1119","1242","1457"))
+
+greaterbiomass.quarterly$SC.Level <- factor(greaterbiomass.quarterly$SC.Level, levels = c("25","72","78","387","402","594","1119","1242","1457"))
 
 
 my_colors = carto_pal(7, "Geyser") # to get hexcodes for geyser to assign FFGS to, for 
@@ -1625,6 +1943,44 @@ percent <- ggplot(df_filtered, aes(x = SC.Level, y = percentage.biomass, fill = 
 
 percent
 
+# Quarterly just for fun
+total_biomass_sites_quarterly <- greaterbiomass.quarterly %>%
+  group_by(SC.Level) %>%
+  summarise(total_biomass = sum(Biomass.Area.Corrected))
+
+df_proportions_table <- greaterbiomass.quarterly %>%
+  left_join(total_biomass_sites_quarterly, by = "SC.Level") %>%
+  group_by(SC.Level, FFG, Replicate) %>% #getting proportion by FFG and Rep per site
+  summarise(Proportion = sum(Biomass.Area.Corrected) / first(total_biomass)) 
+
+df_filtered <- df_proportions_table %>%
+  filter(FFG %in% c("Scraper", "Shredder")) #just using scrapers and shredders
+
+# Calculate percentage biomass for each FFG
+df_filtered <- df_filtered %>%
+  mutate(percentage.biomass = Proportion* 100) #getting percent biomass
+
+# Plot box plots
+percent <- ggplot(df_filtered, aes(x = SC.Level, y = percentage.biomass, fill = FFG)) +
+  geom_boxplot() +  # Adjust color, fill, transparency, and width of boxplots
+  labs(x = "Salinity", y = "Percentage Biomass", fill = "FFGs") +
+  scale_fill_manual(values = ffg_colors, name = "FFG") +
+  theme_minimal() +
+  theme(
+    axis.title = element_text(size = 14),
+    axis.text = element_text(size = 12),
+    panel.grid = element_blank(),
+    axis.line = element_line(),
+    axis.text.x = element_text(angle = 90, hjust = 1, face = "italic"),
+    legend.position = "top",
+    legend.title = element_blank(),
+    legend.text = element_text(size = 12),
+    legend.background = element_blank(),
+    legend.key = element_rect(fill = "white", color = "white")
+  ) +
+  ylim(0, 100)  # Limit y-axis to 0-100
+
+percent
 
 
 #NMDS attempts---------------------------
@@ -2152,7 +2508,6 @@ print(TOPPlot)
 
 
 
-
 # Create polygons around May sites
 
 # Filter some data first for the ellipses
@@ -2189,7 +2544,7 @@ TOPPlot <- ggplot() +
   scale_x_continuous(name = "NMDS1", limits = c(-.15, .15)) +
   scale_y_continuous(name = "NMDS2", limits = c(-.15, .15)) 
 
-
+print(TOPPlot)
 
 
 
@@ -2267,13 +2622,13 @@ print(MID.NMDS)
 # Isolate HIGH sites for each quarterly
 
 high.oct <- subset(TOPsites, site %in% c("RIC.OCT", "LLW.OCT", "LLC.OCT"))
-high.feb <- subset(TOPsites, site %in% c("RIC.FEB", "LLW.FEB", "LLW.FEB"))
+high.feb <- subset(TOPsites, site %in% c("RIC.FEB", "LLW.FEB", "LLC.FEB"))
 high.may <- subset(TOPsites, site %in% c("RIC.MAY", "LLW.MAY", "LLC.MAY"))
 
 TOPsites_high <- TOPsites %>% 
-  filter(site %in% c("RIC.OCT", "LLW.OCT", "LLC.OCT", "RIC.FEB", "LLW.FEB", "LLW.FEB", "RIC.MAY", "LLW.MAY", "LLC.MAY"))
+  filter(site %in% c("RIC.OCT", "LLW.OCT", "LLC.OCT", "RIC.FEB", "LLW.FEB", "LLC.FEB", "RIC.MAY", "LLW.MAY", "LLC.MAY"))
 
-MID.NMDS <- ggplot() +    
+HIGH.NMDS <- ggplot() +    
   geom_mark_ellipse(data = high.oct, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#70A494", alpha = 0.3) +
   geom_mark_ellipse(data = high.feb, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#EDBB8A", alpha = 0.3) +
   geom_mark_ellipse(data = high.may, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#CA562C", alpha = 0.3) +
@@ -2295,24 +2650,8 @@ MID.NMDS <- ggplot() +
   scale_x_continuous(name = "NMDS1", limits = c(-.15, .15)) +
   scale_y_continuous(name = "NMDS2", limits = c(-.15, .15)) 
 
-print(MID.NMDS)
+print(HIGH.NMDS)
 
-
-# extra code
-("CRO" = "#70A494", "EAS" = "#70A494", "HCN" = "#70A494",
-  "HUR" = "#EDBB8A", "FRY" = "#EDBB8A", "RUT" = "#EDBB8A", 
-  "RIC" = "#CA562C", "LLC" = "#CA562C", "LLW" = "#CA562C")) +
-  coord_equal() +
-
-  "EAS.OCT" = "#70A494", "EAS.FEB" = "#70A494", "EAS.MAY" = "#70A494",
-  "CRO.OCT" = "#70A494", "CRO.FEB" = "#70A494", "CRO.MAY" = "#70A494", 
-  "HCN.OCT" = "#70A494", "HCN.FEB" = "#70A494", "HCN.MAY" = "#70A494",
-  "HUR.OCT" = "#EDBB8A", "HUR.FEB" = "#EDBB8A", "HUR.MAY" = "#EDBB8A",
-  "FRY.OCT" = "#EDBB8A", "FRY.FEB" = "#EDBB8A", "FRY.MAY" = "#EDBB8A", 
-  "RUT.OCT" = "#EDBB8A", "RUT.FEB" = "#EDBB8A", "RUT.MAY" = "#EDBB8A",
-  "RIC.OCT" = "#CA562C", "RIC.FEB" = "#CA562C", "RIC.MAY" = "#CA562C",
-  "LLW.OCT" = "#CA562C", "LLW.FEB" = "#CA562C", "LLW.MAY" = "#CA562C", 
-  "LLC.OCT" = "#CA562C", "LLC.FEB" = "#CA562C", "LLC.MAY" = "#CA562C")) +
 
 
 

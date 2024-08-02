@@ -574,7 +574,7 @@ RICmay.totals <- select(RICmay, all_of(columns_to_keep))
 EASjune.totals <- select(EASjune, all_of(columns_to_keep))
 FRYjune.totals <- select(FRYjune, all_of(columns_to_keep))
 RICjune.totals <- select(RICjune, all_of(columns_to_keep))
-# June monthly
+# July monthly
 EASjuly.totals <- select(EASjuly, all_of(columns_to_keep))
 FRYjuly.totals <- select(FRYjuly, all_of(columns_to_keep))
 RICjuly.totals <- select(RICjuly, all_of(columns_to_keep))
@@ -626,6 +626,8 @@ greaterbiomass <- greaterbiomass %>%
 # decimal in wrong place and needed to move one spot to the left
 greaterbiomass <- greaterbiomass %>%
   mutate(Biomass = ifelse(Genus == "Paraleptophlebia", Biomass / 10, Biomass))
+greaterbiomass <- greaterbiomass %>%
+  mutate(Biomass = ifelse(Genus == "Probezzia", Biomass / 10, Biomass))
 
 # Finally, let's add a new column to correct biomass by area
 greaterbiomass <- greaterbiomass %>% mutate(Biomass.Area.Corrected = Biomass*Density)
@@ -894,11 +896,11 @@ meansites # Essentially, the means of the means. I QAQCed this manually and chec
 
 # Make a new df with just quarterly info
 meansites.quarterly <- meansites %>%
-  filter(Sample.Month %in% c("October", "February", "May"))
+  filter(Sample.Month %in% c("October", "February", "May")) # This filters just quarterly data from meansites
 
 
 greaterbiomass.quarterly <- greaterbiomass %>% 
-  filter(Sample.Month %in% c("October", "February", "May"))
+  filter(Sample.Month %in% c("October", "February", "May")) #this will be for NMDS, includes everything
 
 # GG PLOT MANIA BEGINS---------------------------
 
@@ -975,7 +977,7 @@ FFGgplot1.5 <- ggplot(data = meansites.quarterly, aes(x = SC.Level, y = log(mean
     axis.line = element_line(),
     axis.text.x = element_text(angle = 90, hjust = 1, face = "italic"))
 
-FFGgplot1.5   # subtle downward scraper trend
+FFGgplot1.5   # The dots are ex. every scraper log biomass for 25
 
 #  Let's make panels based on SC category
 FFGgplot2 <- ggplot(data = meansites, aes(x = FFG, y = (log(mean.biomass)))) +
@@ -1142,7 +1144,7 @@ FFGgplot6.5<- ggplot(data = meansites.quarterly, aes(x = Sample.Month, y = log(m
   ) +
   facet_wrap(~ FFG, ncol = 2)  # Facet by SC.Level with 2 columns
 
-print(FFGgplot6.5) # This is actually not toooo hard to follow
+print(FFGgplot6.5) # Easier to follow with quarterly data
 
 # Same thing but months are colored this time, can actually see patterns along the SC gradient
 my_colors = carto_pal(11, "Geyser") 
@@ -1363,7 +1365,19 @@ propgg_site_quarterly <- ggplot(df_proportions_sites_quarterly, aes(x = SC.Level
 propgg_site_quarterly# Can really see the scraper decline and shredder increas across the 
 # gradient in this one
 
+# Who are the players in this pattern? Have to go back to raw data to see genus
+filtered <- greaterbiomass.quarterly %>%
+  filter(FFG == "Shredder" & SC.Level == "25")
 
+print(filtered)
+
+top_5_genera <- filtered %>%
+  group_by(Genus) %>%
+  summarise(total_biomass = sum(Biomass.Area.Corrected)) %>%
+  arrange(desc(total_biomass)) %>%
+  slice_head(n = 5)
+
+print(top_5_genera)
 
 
 # COMBINED TRAITS WHOO--------------------------------
@@ -1436,6 +1450,21 @@ ggplot(df_merged, aes(x = Sample.Month, y = Proportion, color = interaction(FFG,
 
 # Same but with quarterly data 
 
+# Who are the players?
+filtered <- greaterbiomass.quarterly %>%
+  filter(FFG == "Shredder" & SYNC == "Asynchronous" & Sample.Month == "May")
+           
+print(filtered)
+
+top_5_genera <- filtered %>%
+  group_by(Genus) %>%
+  summarise(total_biomass = sum(Biomass.Area.Corrected)) %>%
+  arrange(desc(total_biomass)) %>%
+  slice_head(n = 5)
+
+print(top_5_genera)
+
+
 # Filter the data to include only relevant groups
 combo_proportions_quarterly <- meansites.quarterly %>%
   filter((FFG == "Scraper" & SYNC == "Synchronous") |
@@ -1496,6 +1525,8 @@ ggplot(df_merged_quarterly, aes(x = Sample.Month, y = Proportion, color = intera
         legend.text = element_text(size = 13),
         legend.background = element_blank(),
         legend.key = element_rect(fill = "white", color = "white"))
+
+
 
 
 
@@ -1560,6 +1591,20 @@ ggplot(df_merged_quarterly, aes(x = Sample.Month, y = Proportion, color = intera
         legend.background = element_blank(),
         legend.key = element_rect(fill = "white", color = "white"))
 
+
+# Who are the players?
+filtered <- greaterbiomass.quarterly %>%
+  filter(FFG == "Scraper" & SYNC == "Asynchronous" & Sample.Month == "May")
+
+print(filtered)
+
+top_5_genera <- filtered %>%
+  group_by(Genus) %>%
+  summarise(total_biomass = sum(Biomass.Area.Corrected)) %>%
+  arrange(desc(total_biomass)) %>%
+  slice_head(n = 5)
+
+print(top_5_genera)
 
 
 
@@ -1629,7 +1674,7 @@ ggplot(df_merged, aes(x = SC.Level, y = Proportion, color = interaction(FFG, SYN
 # Shredders/Acynchronous are defintiely having a subsidy
 
 
-# SAame thing but with quarterly
+# Same thing but with quarterly
 combo_proportions_quarterly <- meansites.quarterly %>%
   filter((FFG == "Scraper" & SYNC == "Synchronous") |
            (FFG == "Shredder" & SYNC == "Asynchronous"))
@@ -1754,6 +1799,22 @@ ggplot(df_merged_quarterly, aes(x = SC.Level, y = Proportion, color = interactio
         legend.text = element_text(size = 13),
         legend.background = element_blank(),
         legend.key = element_rect(fill = "white", color = "white"))
+
+# Who are the players?
+filtered <- greaterbiomass.quarterly %>%
+  filter(FFG == "Shredder" & SYNC == "Synchronous" & SC.Level == "1457")
+
+print(filtered)
+
+top_5_genera <- filtered %>%
+  group_by(Genus) %>%
+  summarise(total_biomass = sum(Biomass.Area.Corrected)) %>%
+  arrange(desc(total_biomass)) %>%
+  slice_head(n = 5)
+
+print(top_5_genera)
+
+
 
 
 

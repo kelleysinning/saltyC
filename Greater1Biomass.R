@@ -81,7 +81,16 @@ RICjune=read.csv("RIC_June.2024_SUMMARY.csv")
 EASjuly=read.csv("EAS_July.2024_SUMMARY.csv")
 FRYjuly=read.csv("FRY_July.2024_SUMMARY.csv")
 RICjuly=read.csv("RIC_July.2024_SUMMARY.csv")
-
+# August quarterly
+CROaug=read.csv("CRO_Aug.2024_SUMMARY.csv")
+EASaug=read.csv("EAS_Aug.2024_SUMMARY.csv")
+HCNaug=read.csv("HCN_Aug.2024_SUMMARY.csv")
+FRYaug=read.csv("FRY_Aug.2024_SUMMARY.csv")
+HURaug=read.csv("HUR_Aug.2024_SUMMARY.csv")
+RUTaug=read.csv("RUT_Aug.2024_SUMMARY.csv")
+LLWaug=read.csv("LLW_Aug.2024_SUMMARY.csv")
+LLCaug=read.csv("LLC_Aug.2024_SUMMARY.csv")
+RICaug=read.csv("RIC_Aug.2024_SUMMARY.csv")
 
 
 
@@ -148,6 +157,18 @@ RICjune$Site <- c("RIC")
 EASjuly$Site <- c("EAS")
 FRYjuly$Site <- c("FRY")
 RICjuly$Site <- c("RIC")
+# August quarterly
+CROaug$Site <- c("CRO")
+EASaug$Site <- c("EAS")
+HCNaug$Site <- c("HCN")
+FRYaug$Site <- c("FRY")
+HURaug$Site <- c("HUR")
+RUTaug$Site <- c("RUT")
+LLWaug$Site <- c("LLW")
+LLCaug$Site <- c("LLC")
+RICaug$Site <- c("RIC")
+
+
 
 # Adding a column with sample month so the dates aren't weird
 # September monthly
@@ -212,6 +233,18 @@ RICjune$Sample.Month <- c("June")
 EASjuly$Sample.Month <- c("July")
 FRYjuly$Sample.Month <- c("July")
 RICjuly$Sample.Month <- c("July")
+# August quarterly
+CROaug$Sample.Month <- c("August")
+EASaug$Sample.Month <- c("August")
+HCNaug$Sample.Month <- c("August")
+FRYaug$Sample.Month <- c("August")
+HURaug$Sample.Month <- c("August")
+RUTaug$Sample.Month <- c("August")
+LLWaug$Sample.Month <- c("August")
+LLCaug$Sample.Month <- c("August")
+RICaug$Sample.Month <- c("August")
+
+
 
 
 # Adding a column with SC level bc once we merge we won't know
@@ -277,6 +310,16 @@ RICjune$SC.Level <- c("1457")
 EASjuly$SC.Level <- c("25")
 FRYjuly$SC.Level <- c("402")
 RICjuly$SC.Level <- c("1457")
+# August quarterly
+CROaug$SC.Level <- c("72")
+EASaug$SC.Level <- c("25")
+HCNaug$SC.Level <- c("78")
+FRYaug$SC.Level <- c("402")
+HURaug$SC.Level <- c("387")
+RUTaug$SC.Level <- c("594")
+LLWaug$SC.Level <- c("1119")
+LLCaug$SC.Level <- c("1242")
+RICaug$SC.Level <- c("1457")
 
 
 
@@ -343,6 +386,17 @@ RICjune$SC.Category <- c("HIGH")
 EASjuly$SC.Category <- c("REF")
 FRYjuly$SC.Category <- c("MID")
 RICjuly$SC.Category <- c("HIGH")
+# August quarterly
+CROaug$SC.Category <- c("REF")
+EASaug$SC.Category <- c("REF")
+HCNaug$SC.Category <- c("REF")
+FRYaug$SC.Category <- c("MID")
+HURaug$SC.Category <- c("MID")
+RUTaug$SC.Category <- c("MID")
+LLWaug$SC.Category <- c("HIGH")
+LLCaug$SC.Category <- c("HIGH")
+RICaug$SC.Category <- c("HIGH")
+
 
 
 # Let's re-arrange the columns so these new additions are at the front
@@ -510,6 +564,36 @@ FRYjuly<- FRYjuly %>%
 RICjuly<- RICjuly %>% 
   select(c("Site","SC.Category","SC.Level","Sample.Date","Fraction",
            "Replicate","Order","Family","Genus"), everything())
+# August quarterly
+CROaug<- CROaug %>% 
+  select(c("Site","SC.Category","SC.Level","Sample.Date","Fraction",
+           "Replicate","Order","Family","Genus"), everything())
+EASaug<- EASaug %>% 
+  select(c("Site","SC.Category","SC.Level","Sample.Date","Fraction",
+           "Replicate","Order","Family","Genus"), everything())
+HCNaug<- HCNaug %>% 
+  select(c("Site","SC.Category","SC.Level","Sample.Date","Fraction",
+           "Replicate","Order","Family","Genus"), everything())
+FRYaug<- FRYaug %>% 
+  select(c("Site","SC.Category","SC.Level","Sample.Date","Fraction",
+           "Replicate","Order","Family","Genus"), everything())
+HURaug<- HURaug %>% 
+  select(c("Site","SC.Category","SC.Level","Sample.Date","Fraction",
+           "Replicate","Order","Family","Genus"), everything())
+RUTaug<- RUTaug %>% 
+  select(c("Site","SC.Category","SC.Level","Sample.Date","Fraction",
+           "Replicate","Order","Family","Genus"), everything())
+LLWaug<- LLWaug %>% 
+  select(c("Site","SC.Category","SC.Level","Sample.Date","Fraction",
+           "Replicate","Order","Family","Genus"), everything())
+LLCaug<- LLCaug %>% 
+  select(c("Site","SC.Category","SC.Level","Sample.Date","Fraction",
+           "Replicate","Order","Family","Genus"), everything())
+RICaug<- RICaug %>% 
+  select(c("Site","SC.Category","SC.Level","Sample.Date","Fraction",
+           "Replicate","Order","Family","Genus"), everything())
+
+
 
 
 
@@ -578,6 +662,16 @@ RICjune.totals <- select(RICjune, all_of(columns_to_keep))
 EASjuly.totals <- select(EASjuly, all_of(columns_to_keep))
 FRYjuly.totals <- select(FRYjuly, all_of(columns_to_keep))
 RICjuly.totals <- select(RICjuly, all_of(columns_to_keep))
+# August quarterly
+CROaug.totals <- select(CROaug, all_of(columns_to_keep))
+EASaug.totals <- select(EASaug, all_of(columns_to_keep))
+HCNaug.totals <- select(HCNaug, all_of(columns_to_keep))
+FRYaug.totals <- select(FRYaug, all_of(columns_to_keep))
+HURaug.totals <- select(HURaug, all_of(columns_to_keep))
+RUTaug.totals <- select(RUTaug, all_of(columns_to_keep))
+LLWaug.totals <- select(LLWaug, all_of(columns_to_keep))
+LLCaug.totals <- select(LLCaug, all_of(columns_to_keep))
+RICaug.totals <- select(RICaug, all_of(columns_to_keep))
 
 
 
@@ -594,7 +688,9 @@ list_of_greater_totals <- list(EASsept.totals, FRYsept.totals,RICsept.totals,
                            RICapril.totals,CROmay.totals, EASmay.totals,HCNmay.totals, 
                            FRYmay.totals, HURmay.totals, RUTmay.totals, LLWmay.totals, LLCmay.totals,
                            RICmay.totals,EASjune.totals, FRYjune.totals,RICjune.totals, 
-                           EASjuly.totals, FRYjuly.totals,RICjuly.totals) 
+                           EASjuly.totals, FRYjuly.totals,RICjuly.totals,CROaug.totals, 
+                           EASaug.totals,HCNaug.totals, FRYaug.totals, HURaug.totals, RUTaug.totals, 
+                           LLWaug.totals, LLCaug.totals, RICaug.totals) 
 
 greaterbiomass <- do.call(rbind, list_of_greater_totals) #THIS WORKS
 
@@ -622,8 +718,15 @@ greaterbiomass <- greaterbiomass %>%
 greaterbiomass <- greaterbiomass %>%
   mutate(Fraction = ifelse(Fraction == ">1", "> 1", Fraction))
 greaterbiomass <- greaterbiomass %>%
-  mutate(Biomass = ifelse(Genus == "Acroneuria", Biomass / 10, Biomass)) # realized i had
-# decimal in wrong place and needed to move one spot to the left
+  mutate(Genus = ifelse(Genus == "Allocapnia", "Paracapnia", Genus))
+# Allocapnia were actually paracapnia
+greaterbiomass <- greaterbiomass %>%
+  mutate(Genus = ifelse(Genus == "Allocapnia" & Sample.Month == "October" & Fraction == "> 1" & Site == "EAS", 
+                        "Paracapnia", 
+                        Genus))
+# realized i had decimal in wrong place and needed to move one spot to the left
+greaterbiomass <- greaterbiomass %>%
+  mutate(Biomass = ifelse(Genus == "Acroneuria", Biomass / 10, Biomass)) 
 greaterbiomass <- greaterbiomass %>%
   mutate(Biomass = ifelse(Genus == "Paraleptophlebia", Biomass / 10, Biomass))
 greaterbiomass <- greaterbiomass %>%
@@ -668,6 +771,7 @@ greaterbiomass$FFG[greaterbiomass$Genus=="Chironomidae"]="Collector-Gatherer"
 greaterbiomass$FFG[greaterbiomass$Genus=="Chironomini"]="Collector-Gatherer"
 greaterbiomass$FFG[greaterbiomass$Genus=="Circulionidae"]="Scraper"
 greaterbiomass$FFG[greaterbiomass$Genus=="Collembola"]="Collector-Gatherer"
+greaterbiomass$FFG[greaterbiomass$Genus=="Cordulegaster"]="Predator"
 greaterbiomass$FFG[greaterbiomass$Genus=="Cyrnellus"]="Collector-Filterer"
 greaterbiomass$FFG[greaterbiomass$Genus=="Dicranota"]="Predator"
 greaterbiomass$FFG[greaterbiomass$Genus=="Diplectrona"]="Collector-Filterer"
@@ -783,6 +887,7 @@ greaterbiomass$SYNC[greaterbiomass$Genus=="Chironomidae"]=""
 greaterbiomass$SYNC[greaterbiomass$Genus=="Chironomini"]="NA"
 greaterbiomass$SYNC[greaterbiomass$Genus=="Circulionidae"]=""
 greaterbiomass$SYNC[greaterbiomass$Genus=="Collembola"]=""
+greaterbiomass$SYNC[greaterbiomass$Genus=="Cordulegaster"]="Synchronous"
 greaterbiomass$SYNC[greaterbiomass$Genus=="Cyrnellus"]="Synchronous"
 greaterbiomass$SYNC[greaterbiomass$Genus=="Dicranota"]="Asynchronous"
 greaterbiomass$SYNC[greaterbiomass$Genus=="Diplectrona"]="Synchronous"
@@ -896,11 +1001,11 @@ meansites # Essentially, the means of the means. I QAQCed this manually and chec
 
 # Make a new df with just quarterly info
 meansites.quarterly <- meansites %>%
-  filter(Sample.Month %in% c("October", "February", "May")) # This filters just quarterly data from meansites
+  filter(Sample.Month %in% c("October", "February", "May", "August")) # This filters just quarterly data from meansites
 
 
 greaterbiomass.quarterly <- greaterbiomass %>% 
-  filter(Sample.Month %in% c("October", "February", "May")) #this will be for NMDS, includes everything
+  filter(Sample.Month %in% c("October", "February", "May", "August")) #this will be for NMDS, includes everything
 
 # GG PLOT MANIA BEGINS---------------------------
 
@@ -909,13 +1014,13 @@ meansites$Site <- factor(meansites$Site, levels = c("EAS", "CRO","HCN","FRY","HU
 meansites$SC.Category <- factor(meansites$SC.Category, levels = c("REF","MID","HIGH"))
 meansites$SC.Level <- factor(meansites$SC.Level, levels = c("25","72","78","387","402","594","1119","1242","1457"))
 meansites$FFG <- factor(meansites$FFG, levels = c("Scraper","Shredder","Predator","Collector-Gatherer","Collector-Filterer"))
-meansites$Sample.Month <- factor(meansites$Sample.Month, levels = c("September","October","November","December","January", "February", "March", "April", "May", "June", "July"))
+meansites$Sample.Month <- factor(meansites$Sample.Month, levels = c("September","October","November","December","January", "February", "March", "April", "May", "June", "July", "August"))
 
 meansites.quarterly$Site <- factor(meansites.quarterly$Site, levels = c("EAS", "CRO","HCN","FRY","HUR","RUT","LLC","LLW","RIC"))
 meansites.quarterly$SC.Category <- factor(meansites.quarterly$SC.Category, levels = c("REF","MID","HIGH"))
 meansites.quarterly$SC.Level <- factor(meansites.quarterly$SC.Level, levels = c("25","72","78","387","402","594","1119","1242","1457"))
 meansites.quarterly$FFG <- factor(meansites.quarterly$FFG, levels = c("Scraper","Shredder","Predator","Collector-Gatherer","Collector-Filterer"))
-meansites.quarterly$Sample.Month <- factor(meansites.quarterly$Sample.Month, levels = c("September","October","November","December","January", "February", "March", "April", "May", "June", "July"))
+meansites.quarterly$Sample.Month <- factor(meansites.quarterly$Sample.Month, levels = c("September","October","November","December","January", "February", "March", "April", "May", "June", "July", "August"))
 
 biomassmeantable$Site <- factor(biomassmeantable$Site, levels = c("EAS", "CRO","HCN","FRY","HUR","RUT","LLC","LLW","RIC"))
 biomassmeantable$SC.Category <- factor(biomassmeantable$SC.Category, levels = c("REF","MID","HIGH"))
@@ -1147,7 +1252,7 @@ FFGgplot6.5<- ggplot(data = meansites.quarterly, aes(x = Sample.Month, y = log(m
 print(FFGgplot6.5) # Easier to follow with quarterly data
 
 # Same thing but months are colored this time, can actually see patterns along the SC gradient
-my_colors = carto_pal(11, "Geyser") 
+my_colors = carto_pal(12, "Geyser") 
 
 FFGgplot7<- ggplot(data = meansites, aes(x = SC.Level, y = log(mean.biomass), fill = Sample.Month)) +
   geom_bar(stat = "identity", position = "dodge") +  # Bar graph with dodge position
@@ -1225,7 +1330,9 @@ meansites.quarterly$Site <- factor(meansites.quarterly$Site, levels = c("EAS", "
 meansites.quarterly$SC.Category <- factor(meansites.quarterly$SC.Category, levels = c("REF","MID","HIGH"))
 meansites.quarterly$SC.Level <- factor(meansites.quarterly$SC.Level, levels = c("25","72","78","387","402","594","1119","1242","1457"))
 meansites.quarterly$FFG <- factor(meansites.quarterly$FFG, levels = c("Scraper","Shredder","Predator","Collector-Gatherer","Collector-Filterer"))
-meansites.quarterly$Sample.Month <- factor(meansites.quarterly$Sample.Month, levels = c("September","October","November","December","January", "February", "March", "April", "May", "June", "July"))
+meansites.quarterly$Sample.Month <- factor(meansites.quarterly$Sample.Month, levels = c("September","October","November","December","January", "February", "March", "April", "May", "June", "July", "August"))
+
+
 
 install.packages("rcartocolor")# Colorblind color schemes
 library(rcartocolor)
@@ -1816,6 +1923,82 @@ print(top_5_genera)
 
 
 
+
+
+
+
+# More quarterly only and ALL trait combos
+
+traitcombo_colors <- c("Scraper.Asynchronous" = "#008080", 
+                "Shredder.Asynchronous" = "#CA562C", 
+                "Scraper.Synchronous" = "#DE8A5A", 
+                "Shredder.Synchronous" = "#70A494") 
+
+combo_proportions_quarterly <- meansites.quarterly %>%
+  filter((FFG == "Scraper" & SYNC == "Asynchronous") |
+           (FFG == "Shredder" & SYNC == "Synchronous") |
+           (FFG == "Scraper" & SYNC == "Synchronous") |
+           (FFG == "Shredder" & SYNC == "Asynchronous"))
+
+# Calculate total biomass at each time point
+total_biomass_quarterly <- combo_proportions_quarterly %>%
+  group_by(SC.Level) %>%
+  summarise(TotalBiomass = sum(mean.biomass))
+
+# Calculate the biomass contributions of each group
+group_biomass_quarterly <- combo_proportions_quarterly%>%
+  group_by(SC.Level, FFG, SYNC) %>%
+  summarise(GroupBiomass = sum(mean.biomass))
+
+# Merge total biomass with group biomass
+df_merged_quarterly <- merge(group_biomass_quarterly, total_biomass_quarterly, by = "SC.Level")
+
+# Calculate the proportion of biomass for each group
+df_merged_quarterly <- df_merged_quarterly %>%
+  mutate(Proportion = GroupBiomass / TotalBiomass)
+
+# Graph proportions
+my_colors = carto_pal(7, "Geyser")
+
+ggplot(df_merged_quarterly, aes(x = SC.Level, y = Proportion, fill = interaction(FFG, SYNC))) +
+  geom_bar(stat = "identity", position = "stack") +
+  labs(x = "SC Category",
+       y = "Proportion of Biomass",
+       color = "Group") +
+  scale_y_continuous(labels = scales::percent) +
+  scale_fill_manual(values = traitcombo_colors) +
+  theme_bw()+
+  theme(axis.title=element_text(size=15),
+        axis.text=element_text(size=15),
+        panel.grid = element_blank(), 
+        axis.line=element_line(),
+        axis.text.x = element_text(angle = 90, hjust = 1,face="italic"),
+        legend.position="right",
+        legend.title = element_blank(),
+        legend.text = element_text(size=13),
+        legend.background = element_blank(),
+        legend.key=element_rect(fill="white",color="white")) #WOAH
+
+# Continuous
+ggplot(df_merged_quarterly, aes(x = SC.Level, y = Proportion, color = interaction(FFG, SYNC), group = interaction(FFG, SYNC))) +
+  geom_line(size = 1.2) +
+  geom_point(size = 3) +  
+  labs(x = "SC Category",
+       y = "Percent Biomass",
+       color = "Group") +
+  scale_y_continuous(labels = scales::percent) +
+  scale_color_manual(values = traitcombo_colors) + 
+  theme_bw() +
+  theme(axis.title = element_text(size = 15),
+        axis.text = element_text(size = 15),
+        panel.grid = element_blank(), 
+        axis.line = element_line(),
+        axis.text.x = element_text(angle = 90, hjust = 1, face = "italic"),
+        legend.position = "right",
+        legend.title = element_blank(),
+        legend.text = element_text(size = 13),
+        legend.background = element_blank(),
+        legend.key = element_rect(fill = "white", color = "white"))
 
 
 

@@ -2565,31 +2565,38 @@ print(TOPPlott)
 library(vegan) # vegan to calculate distance matrices
 library(ggplot2) # ggplot for plotting
 library(tidyverse) 
+install.packages("tidyverse")
 library(dplyr)
 library(rcartocolor)
-
-
-# Convert Sample.Month and Site to factors with specified levels
-greaterbiomass.quarterly$Sample.Month <- factor(greaterbiomass.quarterly$Sample.Month, levels = c("October", "February", "May"))
-greaterbiomass.quarterly$Site <- factor(greaterbiomass.quarterly$Site, levels = c("EAS", "CRO", "HCN", "HUR", "FRY", "RUT", "RIC", "LLW", "LLC"))
 
 # Aggregate the data
 aggregated.greaterone.quarterly <- aggregate(Biomass.Area.Corrected ~ Site + SC.Level + SC.Category + Sample.Month + Genus, 
                                              data = greaterbiomass.quarterly, 
-                                             FUN = median, 
+                                             FUN = mean, 
                                              na.rm = TRUE)
 
-# Convert Sample.Month and Site to factors with specified levels again to ensure they are ordered correctly in the aggregated data
-aggregated.greaterone.quarterly$Sample.Month <- factor(aggregated.greaterone.quarterly$Sample.Month, levels = c("October", "February", "May"))
-aggregated.greaterone.quarterly$Site <- factor(aggregated.greaterone.quarterly$Site, levels = c("EAS", "CRO", "HCN", "HUR", "FRY", "RUT", "RIC", "LLW", "LLC"))
+
+# Rearranging levels 
+aggregated.greaterone.quarterly$Sample.Month <- factor(greaterbiomass.nmds.quarterly$Sample.Month, levels = c("October", "February", "May", "August"))
+aggregated.greaterone.quarterly$Site <- factor(greaterbiomass.nmds.quarterly$Site, levels = c("EAS", "CRO", "HCN", "HUR", "FRY", "RUT", "RIC", "LLW", "LLC"))
+
+library(dplyr)
+library(tidyr)
 
 # Pivot the data to wider format
-library(tidyr)
 greaterbiomass.nmds.quarterly <- aggregated.greaterone.quarterly %>%
   pivot_wider(
     names_from = Genus, 
-    values_from = Biomass.Area.Corrected,
+    values_from = Biomass.Area.Corrected
   )
+
+# Reapply factor levels
+greaterbiomass.nmds.quarterly$Sample.Month <- factor(greaterbiomass.nmds.quarterly$Sample.Month, 
+                                                     levels = c("October", "February", "May", "August"))
+greaterbiomass.nmds.quarterly$Site <- factor(greaterbiomass.nmds.quarterly$Site, 
+                                             levels = c("EAS", "CRO", "HCN", "HUR", "FRY", "RUT", "RIC", "LLW", "LLC"))
+
+
 
 # Sort the dataframe by Site and Sample.Month
 greaterbiomass.nmds.quarterly <- greaterbiomass.nmds.quarterly[order(greaterbiomass.nmds.quarterly$Site, greaterbiomass.nmds.quarterly$Sample.Month), ]
@@ -2600,7 +2607,6 @@ greaterbiomass.nmds.ID.quarterly<- greaterbiomass.nmds.quarterly[,-c(1:4)]
 
 
 greaterbiomass.nmds.ID.quarterly[is.na(greaterbiomass.nmds.ID.quarterly)] <- 0
-
 
 
 #  metaMDS integrates functions from several packages to perform NMDS.....
@@ -2653,20 +2659,24 @@ TOPGenera$species <- rownames(TOPGenera)  # create a column of species, from the
 
 TOPsites <- scores(TOPScores, display="sites")
 TOPsites <- as.data.frame(TOPsites)
-rownames(TOPsites) <- c("EAS.OCT", "EAS.FEB", "EAS.MAY", "CRO.OCT","CRO.FEB", "CRO.MAY", 
-                        "HCN.OCT", "HCN.FEB", "HCN.MAY","HUR.OCT", "HUR.FEB", "HUR.MAY", 
-                        "FRY.OCT","FRY.FEB", "FRY.MAY", "RUT.OCT", "RUT.FEB", "RUT.MAY",
-                        "RIC.OCT", "RIC.FEB", "RIC.MAY","LLW.OCT", "LLW.FEB","LLW.MAY", 
-                        "LLC.OCT", "LLC.FEB", "LLC.MAY") # Change sites from numbers to categorical
+rownames(TOPsites) <- c("EAS.OCT", "EAS.FEB", "EAS.MAY", "EAS.AUG", "CRO.OCT","CRO.FEB", 
+                        "CRO.MAY", "CRO.AUG", "HCN.OCT", "HCN.FEB", "HCN.MAY", "HCN.AUG", 
+                        "HUR.OCT", "HUR.FEB", "HUR.MAY", "HUR.AUG", "FRY.OCT","FRY.FEB", 
+                        "FRY.MAY", "FRY.AUG", "RUT.OCT", "RUT.FEB", "RUT.MAY","RUT.AUG",
+                        "RIC.OCT", "RIC.FEB", "RIC.MAY", "RIC.AUG", "LLW.OCT", "LLW.FEB",
+                        "LLW.MAY", "LLW.AUG", "LLC.OCT", "LLC.FEB", "LLC.MAY", "LLC.AUG") # Change sites from numbers to categorical
 TOPsites$site <- rownames(TOPsites) 
 
 # Filter data for specific colors
-ref <- subset(TOPsites, site %in% c("EAS.OCT", "EAS.FEB", "EAS.MAY", "CRO.OCT","CRO.FEB", "CRO.MAY", 
-                        "HCN.OCT", "HCN.FEB", "HCN.MAY"))
-mid <- subset(TOPsites, site %in% c("HUR.OCT", "HUR.FEB", "HUR.MAY", 
-                                    "FRY.OCT","FRY.FEB", "FRY.MAY", "RUT.OCT", "RUT.FEB", "RUT.MAY"))
-high <- subset(TOPsites, site %in% c("RIC.OCT", "RIC.FEB", "RIC.MAY","LLW.OCT", "LLW.FEB","LLW.MAY", 
-                                     "LLC.OCT", "LLC.FEB", "LLC.MAY"))
+ref <- subset(TOPsites, site %in% c("EAS.OCT", "EAS.FEB", "EAS.MAY", "EAS.AUG", "CRO.OCT",
+                                    "CRO.FEB", "CRO.MAY", "CRO.AUG", "HCN.OCT", "HCN.FEB", 
+                                    "HCN.MAY", "HCN.AUG"))
+mid <- subset(TOPsites, site %in% c("HUR.OCT", "HUR.FEB", "HUR.MAY", "HUR.AUG","FRY.OCT",
+                                    "FRY.FEB", "FRY.MAY", "FRY.AUG", "RUT.OCT", "RUT.FEB", 
+                                    "RUT.MAY", "RUT.AUG"))
+high <- subset(TOPsites, site %in% c("RIC.OCT", "RIC.FEB", "RIC.MAY", "RIC.AUG", "LLW.OCT", 
+                                     "LLW.FEB","LLW.MAY", "LLW.AUG", "LLC.OCT", "LLC.FEB", 
+                                     "LLC.MAY", "LLC.AUG"))
 
 
 # Create polygons around October sites
@@ -2690,15 +2700,15 @@ library(ggforce)
   geom_text(data = TOPGenera, aes(x = NMDS1, y = NMDS2, label = species), alpha = 0.0, vjust = 0.5, color = "white") +   
   geom_point(data = TOPsites_oct, aes(x = NMDS1, y = NMDS2, color = site), size = 3) + 
   geom_text(data = TOPsites_oct, aes(x = NMDS1, y = NMDS2, label = site), size = 2, vjust = 0.5) +
-  scale_colour_manual(values = c(  "EAS.OCT" = "#70A494", "EAS.FEB" = "#70A49400", "EAS.MAY" = "#70A49400",
-                                   "CRO.OCT" = "#70A494", "CRO.FEB" = "#70A49400", "CRO.MAY" = "#70A49400", 
-                                   "HCN.OCT" = "#70A494", "HCN.FEB" = "#70A49400", "HCN.MAY" = "#70A49400",
-                                   "HUR.OCT" = "#EDBB8A", "HUR.FEB" = "#EDBB8A00", "HUR.MAY" = "#EDBB8A00",
-                                   "FRY.OCT" = "#EDBB8A", "FRY.FEB" = "#EDBB8A00", "FRY.MAY" = "#EDBB8A00", 
-                                   "RUT.OCT" = "#EDBB8A", "RUT.FEB" = "#EDBB8A00", "RUT.MAY" = "#EDBB8A00",
-                                   "RIC.OCT" = "#CA562C", "RIC.FEB" = "#CA562C00", "RIC.MAY" = "#CA562C00",
-                                   "LLW.OCT" = "#CA562C", "LLW.FEB" = "#CA562C00", "LLW.MAY" = "#CA562C00", 
-                                   "LLC.OCT" = "#CA562C", "LLC.FEB" = "#CA562C00", "LLC.MAY" = "#CA562C00")) +
+  scale_colour_manual(values = c(  "EAS.OCT" = "#70A494", "EAS.FEB" = "#70A49400", "EAS.MAY" = "#70A49400","EAS.AUG" = "#70A49400",
+                                   "CRO.OCT" = "#70A494", "CRO.FEB" = "#70A49400", "CRO.MAY" = "#70A49400","CRO.AUG" = "#70A49400",
+                                   "HCN.OCT" = "#70A494", "HCN.FEB" = "#70A49400", "HCN.MAY" = "#70A49400","HCN.AUG" = "#70A49400",
+                                   "HUR.OCT" = "#EDBB8A", "HUR.FEB" = "#70A49400", "HUR.MAY" = "#70A49400","HUR.AUG" = "#70A49400",
+                                   "FRY.OCT" = "#EDBB8A", "FRY.FEB" = "#70A49400", "FRY.MAY" = "#EDBB8A00","FRY.AUG" = "#70A49400",
+                                   "RUT.OCT" = "#EDBB8A", "RUT.FEB" = "#70A49400", "RUT.MAY" = "#EDBB8A00","RUT.AUG" = "#70A49400",
+                                   "RIC.OCT" = "#CA562C", "RIC.FEB" = "#70A49400", "RIC.MAY" = "#CA562C00","RIC.AUG" = "#70A49400",
+                                   "LLW.OCT" = "#CA562C", "LLW.FEB" = "#70A49400", "LLW.MAY" = "#CA562C00","LLW.AUG" = "#70A49400",
+                                   "LLC.OCT" = "#CA562C", "LLC.FEB" = "#70A49400", "LLC.MAY" = "#CA562C00","LLC.AUG" = "#70A49400")) +
   coord_equal() +
   theme_bw() +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
@@ -2731,15 +2741,15 @@ TOPPlot <- ggplot() +
   geom_text(data = TOPGenera, aes(x = NMDS1, y = NMDS2, label = species), alpha = 0.0, vjust = 0.5, color = "white") +   
   geom_point(data = TOPsites_feb, aes(x = NMDS1, y = NMDS2, color = site), size = 3) + 
   geom_text(data = TOPsites_feb, aes(x = NMDS1, y = NMDS2, label = site), size = 2, vjust = 0.5) +
-  scale_colour_manual(values = c(  "EAS.OCT" = "#70A49400", "EAS.FEB" = "#70A494", "EAS.MAY" = "#70A49400",
-                                   "CRO.OCT" = "#70A49400", "CRO.FEB" = "#70A494", "CRO.MAY" = "#70A49400", 
-                                   "HCN.OCT" = "#70A49400", "HCN.FEB" = "#70A494", "HCN.MAY" = "#70A49400",
-                                   "HUR.OCT" = "#EDBB8A00", "HUR.FEB" = "#EDBB8A", "HUR.MAY" = "#70A49400",
-                                   "FRY.OCT" = "#EDBB8A00", "FRY.FEB" = "#EDBB8A", "FRY.MAY" = "#EDBB8A00", 
-                                   "RUT.OCT" = "#EDBB8A00", "RUT.FEB" = "#EDBB8A", "RUT.MAY" = "#EDBB8A00",
-                                   "RIC.OCT" = "#CA562C00", "RIC.FEB" = "#CA562C", "RIC.MAY" = "#CA562C00",
-                                   "LLW.OCT" = "#CA562C00", "LLW.FEB" = "#CA562C", "LLW.MAY" = "#CA562C00", 
-                                   "LLC.OCT" = "#CA562C00", "LLC.FEB" = "#CA562C", "LLC.MAY" = "#CA562C00")) +
+  scale_colour_manual(values = c(  "EAS.OCT" = "#70A49400", "EAS.FEB" = "#70A494", "EAS.MAY" = "#70A49400","EAS.AUG" = "#70A49400",
+                                   "CRO.OCT" = "#70A49400", "CRO.FEB" = "#70A494", "CRO.MAY" = "#70A49400","CRO.AUG" = "#70A49400",
+                                   "HCN.OCT" = "#70A49400", "HCN.FEB" = "#70A494", "HCN.MAY" = "#70A49400","HCN.AUG" = "#70A49400",
+                                   "HUR.OCT" = "#EDBB8A00", "HUR.FEB" = "#EDBB8A", "HUR.MAY" = "#70A49400","HUR.AUG" = "#70A49400",
+                                   "FRY.OCT" = "#EDBB8A00", "FRY.FEB" = "#EDBB8A", "FRY.MAY" = "#EDBB8A00","FRY.AUG" = "#70A49400",
+                                   "RUT.OCT" = "#EDBB8A00", "RUT.FEB" = "#EDBB8A", "RUT.MAY" = "#EDBB8A00","RUT.AUG" = "#70A49400",
+                                   "RIC.OCT" = "#CA562C00", "RIC.FEB" = "#CA562C", "RIC.MAY" = "#CA562C00","RIC.AUG" = "#70A49400",
+                                   "LLW.OCT" = "#CA562C00", "LLW.FEB" = "#CA562C", "LLW.MAY" = "#CA562C00","LLW.AUG" = "#70A49400",
+                                   "LLC.OCT" = "#CA562C00", "LLC.FEB" = "#CA562C", "LLC.MAY" = "#CA562C00","LLC.AUG" = "#70A49400")) +
   coord_equal() +
   theme_bw() +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +

@@ -1084,6 +1084,14 @@ FFGgplot1.5 <- ggplot(data = meansites.quarterly, aes(x = SC.Level, y = log(mean
 
 FFGgplot1.5   # The dots are ex. every scraper log biomass for 25
 
+
+taxa_present <- greaterbiomass.quarterly %>%
+  filter(SC.Level == 1457, FFG == "Collector-Filterer") %>%
+  select(Genus) %>%
+  distinct()
+
+print(taxa_present)#What taxa are pulling out in the above figure? Edit accordingly
+
 #  Let's make panels based on SC category
 FFGgplot2 <- ggplot(data = meansites, aes(x = FFG, y = (log(mean.biomass)))) +
   facet_wrap(~SC.Category, ncol = 3, nrow = 3) +  # Facet by FFG
@@ -1134,6 +1142,8 @@ print(FFGgplot3) # A hump in scrapers and collector-gatherers in spring,
 # collector-filterers and predators remain fairly consistent across time,
 # shredders increasing throughout the year. Of course this figure doesn't show the SC
 
+
+
 FFGgplot3.5 <- ggplot(data = meansites.quarterly, aes(x = Sample.Month, y = (log(mean.biomass)))) +
   facet_wrap(~FFG, ncol = 5, nrow = 5) +  
   geom_boxplot(fill = "white") +  
@@ -1155,6 +1165,16 @@ FFGgplot3.5 <- ggplot(data = meansites.quarterly, aes(x = Sample.Month, y = (log
     legend.key = element_rect(fill = "white", color = "white")
   )
 print(FFGgplot3.5)
+
+
+taxa_present <- greaterbiomass %>%
+  filter(Sample.Month == "March", FFG == "Predator") %>%
+  select(Genus) %>%
+  distinct()
+
+print(taxa_present)#What taxa are pulling out in the above figure? Edit accordingly
+
+
 
 # Months as panels, FFGs on x, another way of sharing previous graph
 FFGgplot4 <- ggplot(data = meansites, aes(x = FFG, y = (log(mean.biomass)))) +
@@ -1179,6 +1199,10 @@ FFGgplot4 <- ggplot(data = meansites, aes(x = FFG, y = (log(mean.biomass)))) +
   )
 print(FFGgplot4) 
 
+
+
+
+# CRAZY PLOTS START HERE
 # There is a lot here but it shows decently FFGs across time and SC gradient
 my_colors = carto_pal(10, "Geyser") 
 
@@ -1229,6 +1253,8 @@ FFGgplot6<- ggplot(data = meansites, aes(x = Sample.Month, y = log(mean.biomass)
 
 print(FFGgplot6) # This is actually not toooo hard to follow
 
+
+
 FFGgplot6.5<- ggplot(data = meansites.quarterly, aes(x = Sample.Month, y = log(mean.biomass), fill = SC.Category)) +
   geom_bar(stat = "identity", position = "dodge") +  # Bar graph with dodge position
   ylab(expression(log(Biomass~(g/m^2)))) +  # Y-axis label
@@ -1250,6 +1276,7 @@ FFGgplot6.5<- ggplot(data = meansites.quarterly, aes(x = Sample.Month, y = log(m
   facet_wrap(~ FFG, ncol = 2)  # Facet by SC.Level with 2 columns
 
 print(FFGgplot6.5) # Easier to follow with quarterly data
+
 
 # Same thing but months are colored this time, can actually see patterns along the SC gradient
 my_colors = carto_pal(12, "Geyser") 
@@ -1997,6 +2024,28 @@ ggplot(df_merged_quarterly, aes(x = SC.Level, y = Proportion, color = interactio
         legend.position = "right",
         legend.title = element_blank(),
         legend.text = element_text(size = 13),
+        legend.background = element_blank(),
+        legend.key = element_rect(fill = "white", color = "white"))
+
+
+
+# Show the trait combos as absolute values instead of proprtions
+# Subset the data for FFG and  synchronization
+subset_absolutetraits <- meansites.quarterly %>%
+  filter(FFG == "Shredder", SYNC == "Synchronous")
+
+# Create the boxplot
+ggplot(subset_absolutetraits, aes(x = SC.Level, y = mean.biomass)) +
+  geom_boxplot(outlier.size = 2, color = "#70A494") +  # Boxplot for subset data
+  labs(x = "SC Category",
+       y = "Biomass") +
+  theme_bw() +
+  theme(axis.title = element_text(size = 15),
+        axis.text = element_text(size = 15),
+        panel.grid = element_blank(), 
+        axis.line = element_line(),
+        axis.text.x = element_text(angle = 90, hjust = 1, face = "italic"),
+        legend.position = "none",  # Remove legend since it's unnecessary for this plot
         legend.background = element_blank(),
         legend.key = element_rect(fill = "white", color = "white"))
 
@@ -2998,5 +3047,27 @@ news(package='DHARMa')
 
 
 
+
+#Comparing taxa across monthly and quarterly-------------------------------
+
+library(dplyr)
+
+# Subset the data for scrapers
+greaterbiomass$Sample.Month <- factor(greaterbiomass$Sample.Month, levels = c("September",
+                                    "October","November","December","January", "February", "March",
+                                     "April", "May", "June", "July", "August"))
+
+scrapers_data <- greaterbiomass %>%
+  filter(FFG == "Scraper")
+
+
+# Create a summary table of scrapers across every sample month
+scrapers_table <- scrapers_data %>%
+  group_by(Sample.Month, Genus) %>%
+  summarise(count = n()) %>%
+  pivot_wider(names_from = Sample.Month, values_from = count, values_fill = 0)
+
+# Print the table
+print(scrapers_table)
 
 

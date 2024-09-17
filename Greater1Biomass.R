@@ -2551,6 +2551,7 @@ site.scores <- as.data.frame(scores(nmds_sites)) #Using the scores function from
 site.scores$site <- rownames(site.scores)# Add site column to dataframe
 head(site.scores)
 
+
 species.scores <- as.data.frame(scores(nmds_species)) 
 species.scores$species <- rownames(species.scores)  
 head(species.scores)
@@ -2579,8 +2580,8 @@ TOPGenera$species <- rownames(TOPGenera)  # create a column of species, from the
 
 TOPsites <- scores(TOPScores, display="sites")
 TOPsites <- as.data.frame(TOPsites)
-rownames(TOPsites) <- c("LLW", "RIC", "HUR", "FRY",
-                        "RUT", "EAS", "CRO", "HCN", "LLC") # Change sites from numbers to categorical
+rownames(TOPsites) <- c("LLW", "LLC", "RIC", "HUR",
+                        "FRY", "RUT", "EAS", "CRO", "HCN") # Change sites from numbers to categorical
 TOPsites$site <- rownames(TOPsites) 
 
 # Filter data for specific colors
@@ -2633,8 +2634,6 @@ greaterbiomass.nmds.quarterly <- aggregated.greaterone.quarterly %>%
   )
 
 
-
-
 # Define the correct order for Sample.Month and Site
 greaterbiomass.nmds.quarterly <- as.data.frame(greaterbiomass.nmds.quarterly)
 
@@ -2643,13 +2642,12 @@ sample_month_levels <- c("October", "February", "May", "August")
 site_levels <- c("EAS", "CRO", "HCN", "HUR", "FRY", "RUT", "RIC", "LLW", "LLC")
 
 # Ensure columns are factors
-greaterbiomass.nmds.quarterly$Sample.Month <- as.factor(greaterbiomass.nmds.quarterly$Sample.Month)
-greaterbiomass.nmds.quarterly$Site <- as.factor(greaterbiomass.nmds.quarterly$Site)
-
-# Apply the factor levels
 greaterbiomass.nmds.quarterly$Sample.Month <- factor(greaterbiomass.nmds.quarterly$Sample.Month, levels = sample_month_levels)
 greaterbiomass.nmds.quarterly$Site <- factor(greaterbiomass.nmds.quarterly$Site, levels = site_levels)
 
+# Arrange the data frame by Sample.Month and Site
+greaterbiomass.nmds.quarterly <- greaterbiomass.nmds.quarterly %>%
+  arrange(Site, Sample.Month)
 
 #  Rename the ID part of the matrix; take out the columns for streams, SC, season, genus
 greaterbiomass.nmds.ID.quarterly<- greaterbiomass.nmds.quarterly[,-c(1:4)]
@@ -2746,7 +2744,7 @@ library(ggforce)
   geom_mark_ellipse(data = ref.oct, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#70A494", alpha = 0.3) +
   geom_mark_ellipse(data = mid.oct, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#EDBB8A", alpha = 0.3) +
   geom_mark_ellipse(data = high.oct, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#CA562C", alpha = 0.3) +
-  geom_text(data = TOPGenera, aes(x = NMDS1, y = NMDS2, label = species), alpha = 0.0, vjust = 0.5, color = "white") +   
+  geom_text(data = TOPGenera, aes(x = NMDS1, y = NMDS2, label = species), alpha = 0.5, vjust = 0.5, color = "grey") +   
   geom_point(data = TOPsites_oct, aes(x = NMDS1, y = NMDS2, color = site), size = 3) + 
   geom_text(data = TOPsites_oct, aes(x = NMDS1, y = NMDS2, label = site), size = 2, vjust = 0.5) +
   scale_colour_manual(values = c(  "EAS.OCT" = "#70A494", "EAS.FEB" = "#70A49400", "EAS.MAY" = "#70A49400","EAS.AUG" = "#70A49400",
@@ -2787,7 +2785,7 @@ TOPPlot <- ggplot() +
   geom_mark_ellipse(data = ref.feb, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#70A494", alpha = 0.3) +
   geom_mark_ellipse(data = mid.feb, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#EDBB8A", alpha = 0.3) +
   geom_mark_ellipse(data = high.feb, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#CA562C", alpha = 0.3) +
-  geom_text(data = TOPGenera, aes(x = NMDS1, y = NMDS2, label = species), alpha = 0.0, vjust = 0.5, color = "white") +   
+  geom_text(data = TOPGenera, aes(x = NMDS1, y = NMDS2, label = species), alpha = 0.5, vjust = 0.5, color = "grey") +   
   geom_point(data = TOPsites_feb, aes(x = NMDS1, y = NMDS2, color = site), size = 3) + 
   geom_text(data = TOPsites_feb, aes(x = NMDS1, y = NMDS2, label = site), size = 2, vjust = 0.5) +
   scale_colour_manual(values = c(  "EAS.OCT" = "#70A49400", "EAS.FEB" = "#70A494", "EAS.MAY" = "#70A49400","EAS.AUG" = "#70A49400",
@@ -2830,7 +2828,7 @@ TOPPlot <- ggplot() +
   geom_mark_ellipse(data = ref.may, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#70A494", alpha = 0.3) +
   geom_mark_ellipse(data = mid.may, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#EDBB8A", alpha = 0.3) +
   geom_mark_ellipse(data = high.may, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#CA562C", alpha = 0.3) +
-  geom_text(data = TOPGenera, aes(x = NMDS1, y = NMDS2, label = species), alpha = 0.0, vjust = 0.5, color = "white") +   
+  geom_text(data = TOPGenera, aes(x = NMDS1, y = NMDS2, label = species), alpha = 0.5, vjust = 0.5, color = "grey") +   
   geom_point(data = TOPsites_may, aes(x = NMDS1, y = NMDS2, color = site), size = 3) + 
   geom_text(data = TOPsites_may, aes(x = NMDS1, y = NMDS2, label = site), size = 2, vjust = 0.5) +
   scale_colour_manual(values = c(  "EAS.OCT" = "#70A49400", "EAS.FEB" = "#70A49400", "EAS.MAY" = "#70A494","EAS.AUG" = "#70A49400",
@@ -2870,7 +2868,7 @@ TOPPlot <- ggplot() +
   geom_mark_ellipse(data = ref.aug, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#70A494", alpha = 0.3) +
   geom_mark_ellipse(data = mid.aug, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#EDBB8A", alpha = 0.3) +
   geom_mark_ellipse(data = high.aug, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#CA562C", alpha = 0.3) +
-  geom_text(data = TOPGenera, aes(x = NMDS1, y = NMDS2, label = species), alpha = 0.0, vjust = 0.5, color = "white") +   
+  geom_text(data = TOPGenera, aes(x = NMDS1, y = NMDS2, label = species), alpha = 0.5, vjust = 0.5, color = "grey") +   
   geom_point(data = TOPsites_aug, aes(x = NMDS1, y = NMDS2, color = site), size = 3) + 
   geom_text(data = TOPsites_aug, aes(x = NMDS1, y = NMDS2, label = site), size = 2, vjust = 0.5) +
   scale_colour_manual(values = c(  "EAS.OCT" = "#70A49400", "EAS.FEB" = "#70A49400", "EAS.MAY" = "#70A49400","EAS.AUG" = "#70A494",
@@ -2911,7 +2909,7 @@ REF.NMDS <- ggplot() +
   geom_mark_ellipse(data = ref.feb, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#EDBB8A", alpha = 0.3) +
   geom_mark_ellipse(data = ref.may, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#CA562C", alpha = 0.3) +
   geom_mark_ellipse(data = ref.aug, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#F6EDBD", alpha = 0.3) +
-  geom_text(data = TOPGenera, aes(x = NMDS1, y = NMDS2, label = species), alpha = 0.0, vjust = 0.5, color = "white") +   
+  geom_text(data = TOPGenera, aes(x = NMDS1, y = NMDS2, label = species), alpha = 0.5, vjust = 0.5, color = "grey") +   
   geom_point(data = TOPsites_ref, aes(x = NMDS1, y = NMDS2, color = site), size = 3) + 
   geom_text(data = TOPsites_ref, aes(x = NMDS1, y = NMDS2, label = site), size = 2, vjust = 0.5) +
   scale_colour_manual(values = c(  "EAS.OCT" = "#70A494", "EAS.FEB" = "#EDBB8A", "EAS.MAY" = "#CA562C","EAS.AUG"="#F6EDBD",
@@ -2927,7 +2925,7 @@ REF.NMDS <- ggplot() +
   theme_bw() +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
   scale_x_continuous(name = "NMDS1", limits = c(-1, 1)) +
-  scale_y_continuous(name = "NMDS2", limits = c(-1, 1)) 
+  scale_y_continuous(name = "NMDS2", limits = c(-.5, 1)) 
 
 print(REF.NMDS)
 
@@ -2949,7 +2947,7 @@ MID.NMDS <- ggplot() +
   geom_mark_ellipse(data = mid.feb, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#EDBB8A", alpha = 0.3) +
   geom_mark_ellipse(data = mid.may, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#CA562C", alpha = 0.3) +
   geom_mark_ellipse(data = mid.aug, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#F6EDBD", alpha = 0.3) +
-  geom_text(data = TOPGenera, aes(x = NMDS1, y = NMDS2, label = species), alpha = 0.0, vjust = 0.5, color = "white") +   
+  geom_text(data = TOPGenera, aes(x = NMDS1, y = NMDS2, label = species), alpha = 0.5, vjust = 0.5, color = "grey") +   
   geom_point(data = TOPsites_mid, aes(x = NMDS1, y = NMDS2, color = site), size = 3) + 
   geom_text(data = TOPsites_mid, aes(x = NMDS1, y = NMDS2, label = site), size = 2, vjust = 0.5) +
   scale_colour_manual(values = c(   "EAS.OCT" = "#CA562C00", "EAS.FEB" = "#CA562C00", "EAS.MAY" = "#CA562C00","EAS.AUG"="#CA562C00",
@@ -2985,7 +2983,7 @@ HIGH.NMDS <- ggplot() +
   geom_mark_ellipse(data = high.feb, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#EDBB8A", alpha = 0.3) +
   geom_mark_ellipse(data = high.may, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#CA562C", alpha = 0.3) +
   geom_mark_ellipse(data = high.aug, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#F6EDBD", alpha = 0.3) +
-  geom_text(data = TOPGenera, aes(x = NMDS1, y = NMDS2, label = species), alpha = 0.0, vjust = 0.5, color = "white") +   
+  geom_text(data = TOPGenera, aes(x = NMDS1, y = NMDS2, label = species), alpha = 0.5, vjust = 0.5, color = "grey") +   
   geom_point(data = TOPsites_high, aes(x = NMDS1, y = NMDS2, color = site), size = 3) + 
   geom_text(data = TOPsites_high, aes(x = NMDS1, y = NMDS2, label = site), size = 2, vjust = 0.5) +
   scale_colour_manual(values = c(  "EAS.OCT" = "#CA562C00", "EAS.FEB" = "#CA562C00", "EAS.MAY" = "#CA562C00","EAS.AUG"="#CA562C00",
@@ -3001,7 +2999,7 @@ HIGH.NMDS <- ggplot() +
   theme_bw() +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
   scale_x_continuous(name = "NMDS1", limits = c(-1, 1)) +
-  scale_y_continuous(name = "NMDS2", limits = c(-1, 1)) 
+  scale_y_continuous(name = "NMDS2", limits = c(-1, .5)) 
 
 print(HIGH.NMDS)
 
@@ -3051,6 +3049,9 @@ news(package='DHARMa')
 #Comparing taxa across monthly and quarterly-------------------------------
 
 library(dplyr)
+install.packages("tidyr")
+library("tidyr")
+
 
 # Subset the data for scrapers
 greaterbiomass$Sample.Month <- factor(greaterbiomass$Sample.Month, levels = c("September",
@@ -3058,7 +3059,7 @@ greaterbiomass$Sample.Month <- factor(greaterbiomass$Sample.Month, levels = c("S
                                      "April", "May", "June", "July", "August"))
 
 scrapers_data <- greaterbiomass %>%
-  filter(FFG == "Scraper")
+  filter(FFG == "Collector-Filterer")
 
 
 # Create a summary table of scrapers across every sample month
@@ -3068,6 +3069,20 @@ scrapers_table <- scrapers_data %>%
   pivot_wider(names_from = Sample.Month, values_from = count, values_fill = 0)
 
 # Print the table
+print(scrapers_table)
+
+# Install and load kableExtra to make it pretty
+install.packages("kableExtra")
+library(kableExtra)
+
+# Assuming scrapers_table is already in a data frame format
+# Create and style the table
+scrapers_table %>%
+  knitr::kable() %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"), full_width = F)
+
+
+# Optionally print the scrapers_table to check the raw data
 print(scrapers_table)
 
 

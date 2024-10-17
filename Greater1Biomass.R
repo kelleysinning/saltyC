@@ -3094,78 +3094,7 @@ print(REF.NMDS)
 
 
 
-# Isolate MID sites for each quarterly
-
-mid.oct <- subset(TOPsites, site %in% c("HUR.OCT", "FRY.OCT", "RUT.OCT"))
-mid.feb <- subset(TOPsites, site %in% c("HUR.FEB", "FRY.FEB", "RUT.FEB"))
-mid.may <- subset(TOPsites, site %in% c("HUR.MAY", "FRY.MAY", "RUT.MAY"))
-mid.aug <- subset(TOPsites, site %in% c("HUR.AUG", "FRY.AUG", "RUT.AUG"))
-
-TOPsites_mid <- TOPsites %>% 
-  filter(site %in% c("HUR.OCT", "FRY.OCT", "RUT.OCT","HUR.FEB", "FRY.FEB", "RUT.FEB","HUR.MAY", "FRY.MAY", "RUT.MAY", "HUR.AUG", "FRY.AUG", "RUT.AUG"))
-
-MID.NMDS <- ggplot() +    
-  geom_mark_ellipse(data = mid.oct, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#70A494", alpha = 0.3) +
-  geom_mark_ellipse(data = mid.feb, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#EDBB8A", alpha = 0.3) +
-  geom_mark_ellipse(data = mid.may, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#CA562C", alpha = 0.3) +
-  geom_mark_ellipse(data = mid.aug, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#F6EDBD", alpha = 0.3) +
-  geom_text(data = TOPGenera, aes(x = NMDS1, y = NMDS2, label = species), alpha = 0.0, vjust = 0.5, color = "grey23") +   
-  geom_point(data = TOPsites_mid, aes(x = NMDS1, y = NMDS2, color = site), size = 3) + 
-  geom_text(data = TOPsites_mid, aes(x = NMDS1, y = NMDS2, label = site), size = 2, vjust = 0.5) +
-  scale_colour_manual(values = c(   "EAS.OCT" = "#CA562C00", "EAS.FEB" = "#CA562C00", "EAS.MAY" = "#CA562C00","EAS.AUG"="#CA562C00",
-                                    "CRO.OCT" = "#CA562C00", "CRO.FEB" = "#CA562C00", "CRO.MAY" = "#CA562C00","CRO.AUG"="#CA562C00",
-                                    "HCN.OCT" = "#CA562C00", "HCN.FEB" = "#CA562C00", "HCN.MAY" = "#CA562C00","HCN.AUG"="#CA562C00",
-                                    "HUR.OCT" = "#70A494", "HUR.FEB" = "#EDBB8A", "HUR.MAY" = "#CA562C","HUR.AUG" = "#F6EDBD",
-                                    "FRY.OCT" = "#70A494", "FRY.FEB" = "#EDBB8A", "FRY.MAY" = "#CA562C","FRY.AUG" = "#F6EDBD",
-                                    "RUT.OCT" = "#70A494", "RUT.FEB" = "#EDBB8A", "RUT.MAY" = "#CA562C","RUT.AUG" = "#F6EDBD",
-                                    "RIC.OCT" = "#CA562C00", "RIC.FEB" = "#CA562C00", "RIC.MAY" = "#CA562C00","RIC.AUG"=  "#EDBB8A00",
-                                    "LLW.OCT" = "#CA562C00", "LLW.FEB" = "#CA562C00", "LLW.MAY" = "#CA562C00","LLW.AUG" = "#EDBB8A00",
-                                    "LLC.OCT" = "#CA562C00", "LLC.FEB" = "#CA562C00", "LLC.MAY" = "#CA562C00","LLC.MAY" = "#EDBB8A00")) +
-  coord_equal() +
-  theme_bw() +
-  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
-  scale_x_continuous(name = "NMDS1", limits = c(-1, 1)) +
-  scale_y_continuous(name = "NMDS2", limits = c(-1, 1)) 
-
-print(MID.NMDS)
-
-
-# Isolate HIGH sites for each quarterly
-
-high.oct <- subset(TOPsites, site %in% c("RIC.OCT", "LLW.OCT", "LLC.OCT"))
-high.feb <- subset(TOPsites, site %in% c("RIC.FEB", "LLW.FEB", "LLC.FEB"))
-high.may <- subset(TOPsites, site %in% c("RIC.MAY", "LLW.MAY", "LLC.MAY"))
-high.aug <- subset(TOPsites, site %in% c("RIC.AUG", "LLW.AUG", "LLC.AUG"))
-
-TOPsites_high <- TOPsites %>% 
-  filter(site %in% c("RIC.OCT", "LLW.OCT", "LLC.OCT", "RIC.FEB", "LLW.FEB", "LLC.FEB", "RIC.MAY", "LLW.MAY", "LLC.MAY", "RIC.AUG", "LLW.AUG", "LLC.AUG"))
-
-HIGH.NMDS <- ggplot() +    
-  geom_mark_ellipse(data = high.oct, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#70A494", alpha = 0.3) +
-  geom_mark_ellipse(data = high.feb, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#EDBB8A", alpha = 0.3) +
-  geom_mark_ellipse(data = high.may, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#CA562C", alpha = 0.3) +
-  geom_mark_ellipse(data = high.aug, aes(x = NMDS1, y = NMDS2, group = "site"), fill = "#F6EDBD", alpha = 0.3) +
-  geom_text(data = TOPGenera, aes(x = NMDS1, y = NMDS2, label = species), alpha = 0.0, vjust = 0.5, color = "grey23") +   
-  geom_point(data = TOPsites_high, aes(x = NMDS1, y = NMDS2, color = site), size = 3) + 
-  geom_text(data = TOPsites_high, aes(x = NMDS1, y = NMDS2, label = site), size = 2, vjust = 0.5) +
-  scale_colour_manual(values = c(  "EAS.OCT" = "#CA562C00", "EAS.FEB" = "#CA562C00", "EAS.MAY" = "#CA562C00","EAS.AUG"="#CA562C00",
-                                   "CRO.OCT" = "#CA562C00", "CRO.FEB" = "#CA562C00", "CRO.MAY" = "#CA562C00","CRO.AUG"="#CA562C00",
-                                   "HCN.OCT" = "#CA562C00", "HCN.FEB" = "#CA562C00", "HCN.MAY" = "#CA562C00","HCN.AUG"="#CA562C00",
-                                   "HUR.OCT" = "#CA562C00", "HUR.FEB" = "#CA562C00", "HUR.MAY" = "#CA562C00","HUR.AUG" = "#CA562C00",
-                                   "FRY.OCT" = "#CA562C00", "FRY.FEB" = "#CA562C00", "FRY.MAY" = "#CA562C00","FRY.AUG" = "#CA562C00",
-                                   "RUT.OCT" = "#CA562C00", "RUT.FEB" = "#CA562C00", "RUT.MAY" = "#CA562C00","RUT.AUG" = "#CA562C00",
-                                   "RIC.OCT" = "#70A494", "RIC.FEB" = "#EDBB8A", "RIC.MAY" = "#CA562C","RIC.AUG"=  "#F6EDBD",
-                                   "LLW.OCT" = "#70A494", "LLW.FEB" = "#EDBB8A", "LLW.MAY" = "#CA562C","LLW.AUG" = "#F6EDBD",
-                                   "LLC.OCT" = "#70A494", "LLC.FEB" = "#EDBB8A", "LLC.MAY" = "#CA562C","LLC.MAY" = "#F6EDBD")) +
-  coord_equal() +
-  theme_bw() +
-  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
-  scale_x_continuous(name = "NMDS1", limits = c(-1, 1)) +
-  scale_y_continuous(name = "NMDS2", limits = c(-1, 1)) 
-
-print(HIGH.NMDS)
-
-
+# 
 
 
 # STATS----------------
